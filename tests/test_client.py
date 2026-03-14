@@ -58,7 +58,7 @@ class TestForumClient:
     def test_instantiation_defaults(self) -> None:
         client = ForumClient(token="test-token")
         assert client._http._token == "test-token"
-        assert client._http._base_url == "https://api.lolz.live"
+        assert client._http._base_url == "https://prod-api.lolz.live"
         client.close()
 
     def test_instantiation_custom_base_url(self) -> None:
@@ -208,7 +208,7 @@ class TestAsyncForumClient:
         with patch("lolzteam.runtime.async_http_client.httpx.AsyncClient"):
             client = AsyncForumClient(token="test-token")
             assert client._http._token == "test-token"
-            assert client._http._base_url == "https://api.lolz.live"
+            assert client._http._base_url == "https://prod-api.lolz.live"
 
     @pytest.mark.parametrize("group", FORUM_API_GROUPS)
     def test_api_group_accessible(self, group: str) -> None:
@@ -310,7 +310,7 @@ class TestMarketClient:
     def test_instantiation_defaults(self) -> None:
         client = MarketClient(token="test-token")
         assert client._http._token == "test-token"
-        assert client._http._base_url == "https://api.lzt.market"
+        assert client._http._base_url == "https://prod-api.lzt.market"
         client.close()
 
     @pytest.mark.parametrize("group", MARKET_API_GROUPS)
@@ -403,7 +403,7 @@ class TestAsyncMarketClient:
         with patch("lolzteam.runtime.async_http_client.httpx.AsyncClient"):
             client = AsyncMarketClient(token="test-token")
             assert client._http._token == "test-token"
-            assert client._http._base_url == "https://api.lzt.market"
+            assert client._http._base_url == "https://prod-api.lzt.market"
 
     @pytest.mark.parametrize("group", MARKET_API_GROUPS)
     def test_api_group_accessible(self, group: str) -> None:

@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Literal
 
+JsonValue = dict[str, "JsonValue"] | list["JsonValue"] | str | int | float | bool | None
+
 
 @dataclass(frozen=True, slots=True)
 class ProxyConfig:

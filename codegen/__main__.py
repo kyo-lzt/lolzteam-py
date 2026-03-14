@@ -8,9 +8,8 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
-from codegen.emitter import emit_group_file, emit_index_file, emit_types_file
+from codegen.emitter import emit_combined_file, emit_types_file
 from codegen.parser import parse_spec
-from codegen.utils.naming import group_to_file_name
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -60,21 +59,14 @@ def generate_api(config: ApiConfig) -> None:
     (config.output_dir / "types.py").write_text(types_content, encoding="utf-8")
     print("  types.py")
 
-    # Write group files
-    for group in result.groups:
-        file_name = group_to_file_name(group.group_name)
-        content = emit_group_file(group)
-        (config.output_dir / f"{file_name}.py").write_text(content, encoding="utf-8")
-        print(f"  {file_name}.py")
-
-    # Write __init__.py
-    index_content = emit_index_file(
+    # Write __init__.py (all group classes + client classes)
+    init_content = emit_combined_file(
         result.groups,
         config.client_name,
         config.default_base_url,
         config.default_rate_limit,
     )
-    (config.output_dir / "__init__.py").write_text(index_content, encoding="utf-8")
+    (config.output_dir / "__init__.py").write_text(init_content, encoding="utf-8")
     print("  __init__.py")
 
     total_ops = sum(len(g.methods) for g in result.groups)
@@ -85,11 +77,11 @@ def _postprocess(dirs: list[Path]) -> None:
     """Run ruff fix + format on generated directories."""
     paths = [str(d) for d in dirs]
     subprocess.run(
-        ["ruff", "check", "--fix", "--quiet", *paths],
+        ["uv", "run", "ruff", "check", "--fix", "--quiet", *paths],
         check=False,
     )
     subprocess.run(
-        ["ruff", "format", "--quiet", *paths],
+        ["uv", "run", "ruff", "format", "--quiet", *paths],
         check=False,
     )
 

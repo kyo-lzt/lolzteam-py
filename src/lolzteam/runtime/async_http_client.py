@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 from urllib.parse import urlencode, urlparse
 
 import httpx
@@ -13,7 +13,7 @@ from lolzteam.runtime.retry import async_with_retry
 if TYPE_CHECKING:
     from types import TracebackType
 
-    from lolzteam.runtime.types import ClientConfig, RequestOptions
+    from lolzteam.runtime.types import ClientConfig, JsonValue, RequestOptions
 
 DEFAULT_BASE_URL = "https://api.zelenka.guru"
 
@@ -99,7 +99,7 @@ class AsyncHttpClient:
             proxy = config.proxy.url
         self._client = httpx.AsyncClient(proxy=proxy)
 
-    async def request(self, options: RequestOptions) -> Any:
+    async def request(self, options: RequestOptions) -> JsonValue:
         if self._rate_limiter is not None:
             await self._rate_limiter.async_acquire()
         return await async_with_retry(
@@ -107,7 +107,7 @@ class AsyncHttpClient:
             self._retry_config,
         )
 
-    async def _execute(self, options: RequestOptions) -> Any:
+    async def _execute(self, options: RequestOptions) -> JsonValue:
         url = f"{self._base_url}{options.path}"
         if options.query is not None:
             qs = _build_query_string(options.query)
@@ -140,7 +140,7 @@ class AsyncHttpClient:
             raise NetworkError(error) from error
 
         try:
-            body = response.json()
+            body: JsonValue = response.json()
         except Exception:
             body = None
 

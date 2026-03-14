@@ -11,7 +11,6 @@ from codegen.transforms.types import (
 from codegen.utils.naming import (
     build_type_name,
     group_to_class_name,
-    group_to_file_name,
     group_to_property_name,
 )
 
@@ -221,7 +220,7 @@ def _emit_sync_method(group: str, method: MethodDefinition) -> str:
     if method.content_type != "form":
         lines.append(f'            content_type="{method.content_type}",')
 
-    lines.append("        ))")
+    lines.append("        ))  # type: ignore[return-value]")
 
     return "\n".join(lines)
 
@@ -275,68 +274,18 @@ def _emit_async_method(group: str, method: MethodDefinition) -> str:
     if method.content_type != "form":
         lines.append(f'            content_type="{method.content_type}",')
 
-    lines.append("        ))")
+    lines.append("        ))  # type: ignore[return-value]")
 
     return "\n".join(lines)
 
 
-def emit_group_file(group: ParsedGroup) -> str:
-    """Generate one file per tag with both sync and async classes."""
+def _emit_group_classes(group: ParsedGroup) -> str:
+    """Emit sync + async classes for a single group (no file header/imports)."""
     class_name = group_to_class_name(group.group_name)
     async_class_name = f"Async{class_name}"
     lines: list[str] = []
 
-    lines.append("# Auto-generated. Do not edit manually.")
-    lines.append("from __future__ import annotations")
-    lines.append("")
-
-    # Collect type imports first to check if Literal is needed
-    type_imports: list[str] = []
-    needs_literal = False
-    for method in group.methods:
-        base = build_type_name(group.group_name, method.method_name)
-        type_imports.append(f"{base}Response")
-        if method.params.query_params:
-            type_imports.append(f"{base}Params")
-        if method.has_body and (method.body_properties or method.body_is_array):
-            type_imports.append(f"{base}Body")
-        # Only path params appear inline in method signatures;
-        # query/body types are referenced via TypedDict names
-        for param in method.params.path_params:
-            if "Literal[" in param.type:
-                needs_literal = True
-
-    # Standard library imports
-    if needs_literal:
-        lines.append("from typing import TYPE_CHECKING, Literal")
-    else:
-        lines.append("from typing import TYPE_CHECKING")
-    lines.append("")
-
-    # Runtime import (needed at runtime for RequestOptions construction)
-    lines.append("from lolzteam.runtime.types import RequestOptions")
-    lines.append("")
-
-    # Type-only imports
-    lines.append("if TYPE_CHECKING:")
-    lines.append("    from lolzteam.runtime.async_http_client import AsyncHttpClient")
-    lines.append("    from lolzteam.runtime.http_client import HttpClient")
-
-    sorted_type_imports = sorted(type_imports)
-    if sorted_type_imports:
-        lines.append("")  # blank line separating third-party from local imports
-        import_line = f"    from .types import {', '.join(sorted_type_imports)}"
-        if len(import_line) > 80:
-            lines.append("    from .types import (")
-            for name in sorted_type_imports:
-                lines.append(f"        {name},")
-            lines.append("    )")
-        else:
-            lines.append(import_line)
-
     # Sync class
-    lines.append("")
-    lines.append("")
     lines.append(f"class {class_name}:")
     lines.append("    def __init__(self, http: HttpClient) -> None:")
     lines.append("        self._http = http")
@@ -356,43 +305,74 @@ def emit_group_file(group: ParsedGroup) -> str:
         lines.append("")
         lines.append(_emit_async_method(group.group_name, method))
 
-    lines.append("")
     return "\n".join(lines)
 
 
-# ─── Index File Emission ─────────────────────────────────────────────────────
+# ─── Combined File Emission ──────────────────────────────────────────────────
 
 
-def emit_index_file(
+def emit_combined_file(
     groups: list[ParsedGroup],
     client_name: str,
     default_base_url: str,
     default_rate_limit: int,
 ) -> str:
-    """Generate __init__.py with sync and async client classes."""
+    """Generate __init__.py with all group classes + sync/async client classes."""
     async_client_name = f"Async{client_name}"
     lines: list[str] = []
 
     lines.append("# Auto-generated. Do not edit manually.")
     lines.append("from __future__ import annotations")
     lines.append("")
+
+    # Check if any group needs Literal
+    needs_literal = False
+    type_imports: list[str] = []
+    for group in groups:
+        for method in group.methods:
+            base = build_type_name(group.group_name, method.method_name)
+            type_imports.append(f"{base}Response")
+            if method.params.query_params:
+                type_imports.append(f"{base}Params")
+            if method.has_body and (method.body_properties or method.body_is_array):
+                type_imports.append(f"{base}Body")
+            for param in method.params.path_params:
+                if "Literal[" in param.type:
+                    needs_literal = True
+
+    # Standard library imports
+    if needs_literal:
+        lines.append("from typing import TYPE_CHECKING, Literal")
+    else:
+        lines.append("from typing import TYPE_CHECKING")
+    lines.append("")
+
+    # Runtime imports (needed at runtime)
     lines.append("from lolzteam.runtime.async_http_client import AsyncHttpClient")
     lines.append("from lolzteam.runtime.http_client import HttpClient")
-    lines.append(
-        "from lolzteam.runtime.types import ClientConfig, ProxyConfig, RateLimitConfig, RetryConfig"
-    )
-
-    # Sort group imports by file name (blank line separating absolute from relative)
+    lines.append("from lolzteam.runtime.types import (")
+    lines.append("    ClientConfig,")
+    lines.append("    ProxyConfig,")
+    lines.append("    RateLimitConfig,")
+    lines.append("    RequestOptions,")
+    lines.append("    RetryConfig,")
+    lines.append(")")
     lines.append("")
-    group_imports: list[str] = []
+
+    # Type-only imports from types.py
+    sorted_type_imports = sorted(type_imports)
+    if sorted_type_imports:
+        lines.append("if TYPE_CHECKING:")
+        lines.append("    from .types import (")
+        for name in sorted_type_imports:
+            lines.append(f"        {name},")
+        lines.append("    )")
+
+    # Emit all group classes
     for group in groups:
-        class_name = group_to_class_name(group.group_name)
-        async_class = f"Async{class_name}"
-        file_name = group_to_file_name(group.group_name)
-        group_imports.append(f"from .{file_name} import {async_class}, {class_name}")
-    group_imports.sort()
-    for imp in group_imports:
-        lines.append(imp)
+        lines.append("")
+        lines.append("")
+        lines.append(_emit_group_classes(group))
 
     # Sync client
     lines.append("")

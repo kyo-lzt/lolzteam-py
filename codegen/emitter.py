@@ -51,10 +51,18 @@ def _emit_body_typed_dict(
     method: MethodDefinition,
 ) -> tuple[str, str] | None:
     """Emit a TypedDict for request body. Returns (type_name, code) or None."""
-    if not method.has_body or not method.body_properties:
+    if not method.has_body:
         return None
 
     type_name = f"{build_type_name(group, method.method_name)}Body"
+
+    # Array body — emit a type alias instead of a TypedDict
+    if method.body_is_array:
+        return type_name, f"{type_name} = list[{method.body_array_item_type}]"
+
+    if not method.body_properties:
+        return None
+
     required_fields: list[tuple[str, str]] = []
     optional_fields: list[tuple[str, str]] = []
 
@@ -175,7 +183,7 @@ def _emit_sync_method(group: str, method: MethodDefinition) -> str:
 
     # Keyword-only marker
     body_type_name = f"{build_type_name(group, method.method_name)}Body"
-    has_body_type = method.has_body and len(method.body_properties) > 0
+    has_body_type = method.has_body and (len(method.body_properties) > 0 or method.body_is_array)
     query_type_name = f"{build_type_name(group, method.method_name)}Params"
     has_query_type = len(method.params.query_params) > 0
 
@@ -229,7 +237,7 @@ def _emit_async_method(group: str, method: MethodDefinition) -> str:
         args.append(f"{param.name}: {param.type}")
 
     body_type_name = f"{build_type_name(group, method.method_name)}Body"
-    has_body_type = method.has_body and len(method.body_properties) > 0
+    has_body_type = method.has_body and (len(method.body_properties) > 0 or method.body_is_array)
     query_type_name = f"{build_type_name(group, method.method_name)}Params"
     has_query_type = len(method.params.query_params) > 0
 
@@ -290,7 +298,7 @@ def emit_group_file(group: ParsedGroup) -> str:
         type_imports.append(f"{base}Response")
         if method.params.query_params:
             type_imports.append(f"{base}Params")
-        if method.has_body and method.body_properties:
+        if method.has_body and (method.body_properties or method.body_is_array):
             type_imports.append(f"{base}Body")
         # Only path params appear inline in method signatures;
         # query/body types are referenced via TypedDict names

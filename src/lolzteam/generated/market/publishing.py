@@ -26,42 +26,32 @@ class PublishingApi:
         self._http = http
 
     def fastsell(self, *, body: PublishingFastsellBody) -> PublishingFastsellResponse:
-        return self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/item/fast-sell",
-                body=body,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="POST",
+            path="/item/fast-sell",
+            body=body,
+        ))
 
     def add(self, *, body: PublishingAddBody) -> PublishingAddResponse:
-        return self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/item/add",
-                body=body,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="POST",
+            path="/item/add",
+            body=body,
+        ))
 
-    def check(
-        self, item_id: int, *, body: PublishingCheckBody | None = None
-    ) -> PublishingCheckResponse:
-        return self._http.request(
-            RequestOptions(
-                method="POST",
-                path=f"/{item_id}/goods/check",
-                body=body,
-            )
-        )
+    def check(self, item_id: int, *, body: PublishingCheckBody | None = None) -> PublishingCheckResponse:
+        return self._http.request(RequestOptions(
+            method="POST",
+            path=f"/{item_id}/goods/check",
+            body=body,
+        ))
 
     def external(self, item_id: int, *, body: PublishingExternalBody) -> PublishingExternalResponse:
-        return self._http.request(
-            RequestOptions(
-                method="POST",
-                path=f"/{item_id}/external-account",
-                body=body,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="POST",
+            path=f"/{item_id}/external-account",
+            body=body,
+        ))
 
 
 class AsyncPublishingApi:
@@ -69,41 +59,29 @@ class AsyncPublishingApi:
         self._http = http
 
     async def fastsell(self, *, body: PublishingFastsellBody) -> PublishingFastsellResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/item/fast-sell",
-                body=body,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="POST",
+            path="/item/fast-sell",
+            body=body,
+        ))
 
     async def add(self, *, body: PublishingAddBody) -> PublishingAddResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/item/add",
-                body=body,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="POST",
+            path="/item/add",
+            body=body,
+        ))
 
-    async def check(
-        self, item_id: int, *, body: PublishingCheckBody | None = None
-    ) -> PublishingCheckResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="POST",
-                path=f"/{item_id}/goods/check",
-                body=body,
-            )
-        )
+    async def check(self, item_id: int, *, body: PublishingCheckBody | None = None) -> PublishingCheckResponse:
+        return await self._http.request(RequestOptions(
+            method="POST",
+            path=f"/{item_id}/goods/check",
+            body=body,
+        ))
 
-    async def external(
-        self, item_id: int, *, body: PublishingExternalBody
-    ) -> PublishingExternalResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="POST",
-                path=f"/{item_id}/external-account",
-                body=body,
-            )
-        )
+    async def external(self, item_id: int, *, body: PublishingExternalBody) -> PublishingExternalResponse:
+        return await self._http.request(RequestOptions(
+            method="POST",
+            path=f"/{item_id}/external-account",
+            body=body,
+        ))

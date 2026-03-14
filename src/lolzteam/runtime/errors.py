@@ -47,6 +47,10 @@ class NetworkError(LolzteamError):
         self.__cause__ = cause
 
 
+class ConfigError(LolzteamError):
+    pass
+
+
 def create_http_error(status: int, body: object, headers: httpx.Headers) -> HttpError:
     if status == 429:
         return RateLimitError(body, headers)

@@ -9,30 +9,28 @@ if TYPE_CHECKING:
     from lolzteam.runtime.async_http_client import AsyncHttpClient
     from lolzteam.runtime.http_client import HttpClient
 
-    from .types import BatchExecuteResponse
+    from .types import BatchExecuteBody, BatchExecuteResponse
 
 
 class BatchApi:
     def __init__(self, http: HttpClient) -> None:
         self._http = http
 
-    def execute(self) -> BatchExecuteResponse:
-        return self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/batch",
-            )
-        )
+    def execute(self, *, body: BatchExecuteBody | None = None) -> BatchExecuteResponse:
+        return self._http.request(RequestOptions(
+            method="POST",
+            path="/batch",
+            body=body,
+        ))
 
 
 class AsyncBatchApi:
     def __init__(self, http: AsyncHttpClient) -> None:
         self._http = http
 
-    async def execute(self) -> BatchExecuteResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/batch",
-            )
-        )
+    async def execute(self, *, body: BatchExecuteBody | None = None) -> BatchExecuteResponse:
+        return await self._http.request(RequestOptions(
+            method="POST",
+            path="/batch",
+            body=body,
+        ))

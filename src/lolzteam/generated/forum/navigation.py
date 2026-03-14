@@ -17,13 +17,11 @@ class NavigationApi:
         self._http = http
 
     def list(self, *, params: NavigationListParams | None = None) -> NavigationListResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/navigation",
-                query=params,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path="/navigation",
+            query=params,
+        ))
 
 
 class AsyncNavigationApi:
@@ -31,10 +29,8 @@ class AsyncNavigationApi:
         self._http = http
 
     async def list(self, *, params: NavigationListParams | None = None) -> NavigationListResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/navigation",
-                query=params,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path="/navigation",
+            query=params,
+        ))

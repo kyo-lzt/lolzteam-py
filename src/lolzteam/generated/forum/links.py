@@ -17,20 +17,16 @@ class LinksApi:
         self._http = http
 
     def list(self) -> LinksListResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/link-forums",
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path="/link-forums",
+        ))
 
     def get(self, link_id: int) -> LinksGetResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path=f"/link-forums/{link_id}",
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path=f"/link-forums/{link_id}",
+        ))
 
 
 class AsyncLinksApi:
@@ -38,17 +34,13 @@ class AsyncLinksApi:
         self._http = http
 
     async def list(self) -> LinksListResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/link-forums",
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path="/link-forums",
+        ))
 
     async def get(self, link_id: int) -> LinksGetResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path=f"/link-forums/{link_id}",
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path=f"/link-forums/{link_id}",
+        ))

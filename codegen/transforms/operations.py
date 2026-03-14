@@ -32,6 +32,8 @@ class MethodDefinition:
     response_type: str = "object"
     response_schema: SchemaObject | None = None
     content_type: str = "form"  # "form" or "multipart"
+    body_is_array: bool = False
+    body_array_item_type: str = "object"
 
 
 def _detect_content_type(operation: dict[str, object], spec: Spec) -> str:
@@ -48,33 +50,42 @@ def _detect_content_type(operation: dict[str, object], spec: Spec) -> str:
     return "form"
 
 
-def _extract_body_properties(
+@dataclass
+class BodyExtractionResult:
+    properties: list[BodyProperty] = field(default_factory=list)
+    is_array: bool = False
+    array_item_type: str = "object"
+
+
+def _extract_body(
     operation: dict[str, object],
     spec: Spec,
-) -> list[BodyProperty]:
+) -> BodyExtractionResult:
     """Extract body properties from a request body, resolving $ref as needed."""
-    body_properties: list[BodyProperty] = []
+    empty = BodyExtractionResult()
 
     request_body = operation.get("requestBody")
     if request_body is None:
-        return body_properties
+        return empty
 
     resolved_body = deref_shallow(request_body, spec)
     if not isinstance(resolved_body, dict):
-        return body_properties
+        return empty
 
     content = resolved_body.get("content")
     if not isinstance(content, dict):
-        return body_properties
+        return empty
 
     # Try application/json first, then multipart/form-data
     media_type = content.get("application/json") or content.get("multipart/form-data")
     if not isinstance(media_type, dict):
-        return body_properties
+        return empty
 
     schema = media_type.get("schema")
     if not isinstance(schema, dict):
-        return body_properties
+        return empty
+
+    body_properties: list[BodyProperty] = []
 
     # Handle oneOf -- merge all properties from all variants
     one_of = schema.get("oneOf")
@@ -120,6 +131,12 @@ def _extract_body_properties(
                     required=name in all_required,
                 )
             )
+    # Handle array body (e.g. POST /batch)
+    elif schema.get("type") == "array" and not schema.get("properties"):
+        items = schema.get("items")
+        item_type = schema_to_type_string(items, spec) if isinstance(items, dict) else "object"
+        return BodyExtractionResult(is_array=True, array_item_type=item_type)
+
     else:
         properties = schema.get("properties")
         if isinstance(properties, dict):
@@ -138,7 +155,7 @@ def _extract_body_properties(
                     )
                 )
 
-    return body_properties
+    return BodyExtractionResult(properties=body_properties)
 
 
 def extract_method_definition(
@@ -151,7 +168,7 @@ def extract_method_definition(
 ) -> MethodDefinition:
     """Build a MethodDefinition from a resolved operation object."""
     params = extract_parameters(operation, spec)
-    body_properties = _extract_body_properties(operation, spec)
+    body = _extract_body(operation, spec)
     response_info = extract_response_info(operation, spec)
 
     request_body = operation.get("requestBody")
@@ -170,10 +187,12 @@ def extract_method_definition(
         http_method=http_method.upper(),
         path=path,
         params=params,
-        body_properties=body_properties,
+        body_properties=body.properties,
         has_body=has_body,
         body_required=body_required,
         response_type=response_info.type_string,
         response_schema=response_info.schema,
         content_type=content_type,
+        body_is_array=body.is_array,
+        body_array_item_type=body.array_item_type,
     )

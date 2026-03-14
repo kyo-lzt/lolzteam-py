@@ -25,39 +25,31 @@ class CustomDiscountsApi:
         self._http = http
 
     def get(self) -> CustomDiscountsGetResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/custom-discounts",
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path="/custom-discounts",
+        ))
 
     def create(self, *, body: CustomDiscountsCreateBody) -> CustomDiscountsCreateResponse:
-        return self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/custom-discounts",
-                body=body,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="POST",
+            path="/custom-discounts",
+            body=body,
+        ))
 
     def edit(self, *, body: CustomDiscountsEditBody) -> CustomDiscountsEditResponse:
-        return self._http.request(
-            RequestOptions(
-                method="PUT",
-                path="/custom-discounts",
-                body=body,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="PUT",
+            path="/custom-discounts",
+            body=body,
+        ))
 
     def delete(self, *, body: CustomDiscountsDeleteBody) -> CustomDiscountsDeleteResponse:
-        return self._http.request(
-            RequestOptions(
-                method="DELETE",
-                path="/custom-discounts",
-                body=body,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="DELETE",
+            path="/custom-discounts",
+            body=body,
+        ))
 
 
 class AsyncCustomDiscountsApi:
@@ -65,36 +57,28 @@ class AsyncCustomDiscountsApi:
         self._http = http
 
     async def get(self) -> CustomDiscountsGetResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/custom-discounts",
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path="/custom-discounts",
+        ))
 
     async def create(self, *, body: CustomDiscountsCreateBody) -> CustomDiscountsCreateResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/custom-discounts",
-                body=body,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="POST",
+            path="/custom-discounts",
+            body=body,
+        ))
 
     async def edit(self, *, body: CustomDiscountsEditBody) -> CustomDiscountsEditResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="PUT",
-                path="/custom-discounts",
-                body=body,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="PUT",
+            path="/custom-discounts",
+            body=body,
+        ))
 
     async def delete(self, *, body: CustomDiscountsDeleteBody) -> CustomDiscountsDeleteResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="DELETE",
-                path="/custom-discounts",
-                body=body,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="DELETE",
+            path="/custom-discounts",
+            body=body,
+        ))

@@ -17,14 +17,12 @@ class OAuthApi:
         self._http = http
 
     def token(self, *, body: OAuthTokenBody) -> OAuthTokenResponse:
-        return self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/oauth/token",
-                body=body,
-                content_type="multipart",
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="POST",
+            path="/oauth/token",
+            body=body,
+            content_type="multipart",
+        ))
 
 
 class AsyncOAuthApi:
@@ -32,11 +30,9 @@ class AsyncOAuthApi:
         self._http = http
 
     async def token(self, *, body: OAuthTokenBody) -> OAuthTokenResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/oauth/token",
-                body=body,
-                content_type="multipart",
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="POST",
+            path="/oauth/token",
+            body=body,
+            content_type="multipart",
+        ))

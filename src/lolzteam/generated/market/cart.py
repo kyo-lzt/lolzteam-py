@@ -24,31 +24,25 @@ class CartApi:
         self._http = http
 
     def get(self, *, params: CartGetParams | None = None) -> CartGetResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/cart",
-                query=params,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path="/cart",
+            query=params,
+        ))
 
     def add(self, *, body: CartAddBody) -> CartAddResponse:
-        return self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/cart",
-                body=body,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="POST",
+            path="/cart",
+            body=body,
+        ))
 
     def delete(self, *, body: CartDeleteBody | None = None) -> CartDeleteResponse:
-        return self._http.request(
-            RequestOptions(
-                method="DELETE",
-                path="/cart",
-                body=body,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="DELETE",
+            path="/cart",
+            body=body,
+        ))
 
 
 class AsyncCartApi:
@@ -56,28 +50,22 @@ class AsyncCartApi:
         self._http = http
 
     async def get(self, *, params: CartGetParams | None = None) -> CartGetResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/cart",
-                query=params,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path="/cart",
+            query=params,
+        ))
 
     async def add(self, *, body: CartAddBody) -> CartAddResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/cart",
-                body=body,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="POST",
+            path="/cart",
+            body=body,
+        ))
 
     async def delete(self, *, body: CartDeleteBody | None = None) -> CartDeleteResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="DELETE",
-                path="/cart",
-                body=body,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="DELETE",
+            path="/cart",
+            body=body,
+        ))

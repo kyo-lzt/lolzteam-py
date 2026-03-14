@@ -25,39 +25,31 @@ class TagsApi:
         self._http = http
 
     def popular(self) -> TagsPopularResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/tags",
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path="/tags",
+        ))
 
     def list(self, *, params: TagsListParams | None = None) -> TagsListResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/tags/list",
-                query=params,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path="/tags/list",
+            query=params,
+        ))
 
     def get(self, tag_id: int, *, params: TagsGetParams | None = None) -> TagsGetResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path=f"/tags/{tag_id}",
-                query=params,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path=f"/tags/{tag_id}",
+            query=params,
+        ))
 
     def find(self, *, params: TagsFindParams) -> TagsFindResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/tags/find",
-                query=params,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path="/tags/find",
+            query=params,
+        ))
 
 
 class AsyncTagsApi:
@@ -65,36 +57,28 @@ class AsyncTagsApi:
         self._http = http
 
     async def popular(self) -> TagsPopularResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/tags",
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path="/tags",
+        ))
 
     async def list(self, *, params: TagsListParams | None = None) -> TagsListResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/tags/list",
-                query=params,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path="/tags/list",
+            query=params,
+        ))
 
     async def get(self, tag_id: int, *, params: TagsGetParams | None = None) -> TagsGetResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path=f"/tags/{tag_id}",
-                query=params,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path=f"/tags/{tag_id}",
+            query=params,
+        ))
 
     async def find(self, *, params: TagsFindParams) -> TagsFindResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/tags/find",
-                query=params,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path="/tags/find",
+            query=params,
+        ))

@@ -24,31 +24,25 @@ class ProfileApi:
         self._http = http
 
     def claims(self, *, params: ProfileClaimsParams | None = None) -> ProfileClaimsResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/claims",
-                query=params,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path="/claims",
+            query=params,
+        ))
 
     def get(self, *, params: ProfileGetParams | None = None) -> ProfileGetResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/me",
-                query=params,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path="/me",
+            query=params,
+        ))
 
     def edit(self, *, body: ProfileEditBody | None = None) -> ProfileEditResponse:
-        return self._http.request(
-            RequestOptions(
-                method="PUT",
-                path="/me",
-                body=body,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="PUT",
+            path="/me",
+            body=body,
+        ))
 
 
 class AsyncProfileApi:
@@ -56,28 +50,22 @@ class AsyncProfileApi:
         self._http = http
 
     async def claims(self, *, params: ProfileClaimsParams | None = None) -> ProfileClaimsResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/claims",
-                query=params,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path="/claims",
+            query=params,
+        ))
 
     async def get(self, *, params: ProfileGetParams | None = None) -> ProfileGetResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/me",
-                query=params,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path="/me",
+            query=params,
+        ))
 
     async def edit(self, *, body: ProfileEditBody | None = None) -> ProfileEditResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="PUT",
-                path="/me",
-                body=body,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="PUT",
+            path="/me",
+            body=body,
+        ))

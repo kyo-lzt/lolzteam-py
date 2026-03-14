@@ -17,13 +17,11 @@ class AssetsApi:
         self._http = http
 
     def css(self, *, params: AssetsCssParams | None = None) -> AssetsCssResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/css",
-                query=params,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path="/css",
+            query=params,
+        ))
 
 
 class AsyncAssetsApi:
@@ -31,10 +29,8 @@ class AsyncAssetsApi:
         self._http = http
 
     async def css(self, *, params: AssetsCssParams | None = None) -> AssetsCssResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/css",
-                query=params,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path="/css",
+            query=params,
+        ))

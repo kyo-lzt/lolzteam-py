@@ -21,21 +21,17 @@ class CategoriesApi:
         self._http = http
 
     def list(self, *, params: CategoriesListParams | None = None) -> CategoriesListResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/categories",
-                query=params,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path="/categories",
+            query=params,
+        ))
 
     def get(self, category_id: int) -> CategoriesGetResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path=f"/categories/{category_id}",
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path=f"/categories/{category_id}",
+        ))
 
 
 class AsyncCategoriesApi:
@@ -43,18 +39,14 @@ class AsyncCategoriesApi:
         self._http = http
 
     async def list(self, *, params: CategoriesListParams | None = None) -> CategoriesListResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/categories",
-                query=params,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path="/categories",
+            query=params,
+        ))
 
     async def get(self, category_id: int) -> CategoriesGetResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path=f"/categories/{category_id}",
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path=f"/categories/{category_id}",
+        ))

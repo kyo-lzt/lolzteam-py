@@ -29,14 +29,14 @@ APIS = [
         schema_path=ROOT / "schemas" / "forum.json",
         output_dir=ROOT / "src" / "lolzteam" / "generated" / "forum",
         client_name="ForumClient",
-        default_base_url="https://api.lolz.live",
+        default_base_url="https://prod-api.lolz.live",
         default_rate_limit=300,
     ),
     ApiConfig(
         schema_path=ROOT / "schemas" / "market.json",
         output_dir=ROOT / "src" / "lolzteam" / "generated" / "market",
         client_name="MarketClient",
-        default_base_url="https://api.lzt.market",
+        default_base_url="https://prod-api.lzt.market",
         default_rate_limit=120,
     ),
 ]
@@ -45,7 +45,10 @@ APIS = [
 def generate_api(config: ApiConfig) -> None:
     print(f"Generating {config.client_name}...")
 
-    raw_spec = json.loads(config.schema_path.read_text(encoding="utf-8"))
+    try:
+        raw_spec = json.loads(config.schema_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as exc:
+        raise RuntimeError(f"Failed to parse schema {config.schema_path}: {exc}") from exc
     result = parse_spec(raw_spec)
 
     if config.output_dir.exists():

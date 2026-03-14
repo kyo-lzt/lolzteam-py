@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 
 import httpx
 
 from lolzteam.runtime.auth import apply_auth
-from lolzteam.runtime.errors import NetworkError, create_http_error
+from lolzteam.runtime.errors import ConfigError, NetworkError, create_http_error
 from lolzteam.runtime.rate_limiter import RateLimiter
 from lolzteam.runtime.retry import async_with_retry
 
@@ -88,7 +88,15 @@ class AsyncHttpClient:
         if config.rate_limit is not None:
             self._rate_limiter = RateLimiter(config.rate_limit.requests_per_minute)
 
-        proxy = config.proxy.url if config.proxy is not None else None
+        proxy: str | None = None
+        if config.proxy is not None:
+            parsed = urlparse(config.proxy.url)
+            if parsed.scheme not in ("http", "https", "socks5"):
+                msg = f"unsupported proxy scheme: {parsed.scheme or '<none>'}"
+                raise ConfigError(msg)
+            if not parsed.hostname:
+                raise ConfigError("proxy URL has no host")
+            proxy = config.proxy.url
         self._client = httpx.AsyncClient(proxy=proxy)
 
     async def request(self, options: RequestOptions) -> Any:

@@ -5,7 +5,7 @@ from lolzteam.runtime.async_http_client import AsyncHttpClient
 from lolzteam.runtime.http_client import HttpClient
 from lolzteam.runtime.types import ClientConfig, ProxyConfig, RateLimitConfig, RetryConfig
 
-from .assets import AssetsApi, AsyncAssetsApi
+from .assets import AsyncAssetsApi, AssetsApi
 from .batch import AsyncBatchApi, BatchApi
 from .categories import AsyncCategoriesApi, CategoriesApi
 from .chatbox import AsyncChatboxApi, ChatboxApi
@@ -30,7 +30,7 @@ class ForumClient:
         self,
         token: str,
         *,
-        base_url: str = "https://api.lolz.live",
+        base_url: str = "https://prod-api.lolz.live",
         proxy: str | None = None,
         max_retries: int = 3,
         base_delay: float = 1.0,
@@ -79,7 +79,7 @@ class AsyncForumClient:
         self,
         token: str,
         *,
-        base_url: str = "https://api.lolz.live",
+        base_url: str = "https://prod-api.lolz.live",
         proxy: str | None = None,
         max_retries: int = 3,
         base_delay: float = 1.0,

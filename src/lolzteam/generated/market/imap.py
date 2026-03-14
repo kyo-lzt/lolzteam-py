@@ -22,22 +22,18 @@ class ImapApi:
         self._http = http
 
     def create(self, *, body: ImapCreateBody) -> ImapCreateResponse:
-        return self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/imap",
-                body=body,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="POST",
+            path="/imap",
+            body=body,
+        ))
 
     def delete(self, *, body: ImapDeleteBody) -> ImapDeleteResponse:
-        return self._http.request(
-            RequestOptions(
-                method="DELETE",
-                path="/imap",
-                body=body,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="DELETE",
+            path="/imap",
+            body=body,
+        ))
 
 
 class AsyncImapApi:
@@ -45,19 +41,15 @@ class AsyncImapApi:
         self._http = http
 
     async def create(self, *, body: ImapCreateBody) -> ImapCreateResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/imap",
-                body=body,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="POST",
+            path="/imap",
+            body=body,
+        ))
 
     async def delete(self, *, body: ImapDeleteBody) -> ImapDeleteResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="DELETE",
-                path="/imap",
-                body=body,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="DELETE",
+            path="/imap",
+            body=body,
+        ))

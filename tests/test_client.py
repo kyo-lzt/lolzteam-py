@@ -8,6 +8,7 @@ import pytest
 from lolzteam import AsyncForumClient, AsyncMarketClient, ForumClient, MarketClient
 from lolzteam.runtime.errors import (
     AuthError,
+    ConfigError,
     NetworkError,
     NotFoundError,
     RateLimitError,
@@ -502,4 +503,26 @@ class TestConfig:
         with patch("lolzteam.runtime.http_client.httpx.Client"):
             client = ForumClient(token="t", base_url="https://example.com/")
             assert client._http._base_url == "https://example.com"
+            client.close()
+
+    def test_proxy_rejects_unsupported_scheme(self) -> None:
+        with pytest.raises(ConfigError, match="unsupported proxy scheme"):
+            ForumClient(token="t", proxy="ftp://proxy:8080")
+
+    def test_proxy_rejects_no_scheme(self) -> None:
+        with pytest.raises(ConfigError, match="unsupported proxy scheme"):
+            ForumClient(token="t", proxy="just-a-host:8080")
+
+    def test_proxy_rejects_no_host(self) -> None:
+        with pytest.raises(ConfigError, match="proxy URL has no host"):
+            ForumClient(token="t", proxy="http://")
+
+    def test_proxy_accepts_valid_http(self) -> None:
+        with patch("lolzteam.runtime.http_client.httpx.Client"):
+            client = ForumClient(token="t", proxy="http://proxy:8080")
+            client.close()
+
+    def test_proxy_accepts_valid_socks5(self) -> None:
+        with patch("lolzteam.runtime.http_client.httpx.Client"):
+            client = ForumClient(token="t", proxy="socks5://proxy:1080")
             client.close()

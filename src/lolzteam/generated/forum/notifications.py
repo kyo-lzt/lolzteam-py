@@ -23,60 +23,46 @@ class NotificationsApi:
         self._http = http
 
     def list(self, *, params: NotificationsListParams | None = None) -> NotificationsListResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/notifications",
-                query=params,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path="/notifications",
+            query=params,
+        ))
 
     def get(self, notification_id: int) -> NotificationsGetResponse:
-        return self._http.request(
-            RequestOptions(
-                method="GET",
-                path=f"/notifications/{notification_id}/content",
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="GET",
+            path=f"/notifications/{notification_id}/content",
+        ))
 
     def read(self, *, body: NotificationsReadBody | None = None) -> NotificationsReadResponse:
-        return self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/notifications/read",
-                body=body,
-            )
-        )
+        return self._http.request(RequestOptions(
+            method="POST",
+            path="/notifications/read",
+            body=body,
+        ))
 
 
 class AsyncNotificationsApi:
     def __init__(self, http: AsyncHttpClient) -> None:
         self._http = http
 
-    async def list(
-        self, *, params: NotificationsListParams | None = None
-    ) -> NotificationsListResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path="/notifications",
-                query=params,
-            )
-        )
+    async def list(self, *, params: NotificationsListParams | None = None) -> NotificationsListResponse:
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path="/notifications",
+            query=params,
+        ))
 
     async def get(self, notification_id: int) -> NotificationsGetResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="GET",
-                path=f"/notifications/{notification_id}/content",
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="GET",
+            path=f"/notifications/{notification_id}/content",
+        ))
 
     async def read(self, *, body: NotificationsReadBody | None = None) -> NotificationsReadResponse:
-        return await self._http.request(
-            RequestOptions(
-                method="POST",
-                path="/notifications/read",
-                body=body,
-            )
-        )
+        return await self._http.request(RequestOptions(
+            method="POST",
+            path="/notifications/read",
+            body=body,
+        ))

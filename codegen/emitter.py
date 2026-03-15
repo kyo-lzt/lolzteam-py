@@ -397,9 +397,12 @@ def emit_combined_file(
     for group in groups:
         lines.append("")
         lines.append("")
-        lines.append(_emit_group_classes(
-            group, is_search=group.group_name in search_groups,
-        ))
+        lines.append(
+            _emit_group_classes(
+                group,
+                is_search=group.group_name in search_groups,
+            )
+        )
 
     # Sync client
     lines.append("")

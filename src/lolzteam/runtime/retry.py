@@ -49,13 +49,15 @@ def with_retry(
                 raise
             delay = compute_delay(attempt, config, error)
             if on_retry is not None:
-                on_retry(RetryInfo(
-                    attempt=attempt,
-                    delay=delay,
-                    error=error,
-                    method=options.method,
-                    path=options.path,
-                ))
+                on_retry(
+                    RetryInfo(
+                        attempt=attempt,
+                        delay=delay,
+                        error=error,
+                        method=options.method,
+                        path=options.path,
+                    )
+                )
             time.sleep(delay)
     msg = "unreachable: max_retries must be >= 0"
     raise RuntimeError(msg)
@@ -75,13 +77,15 @@ async def async_with_retry(
                 raise
             delay = compute_delay(attempt, config, error)
             if on_retry is not None:
-                await on_retry(RetryInfo(
-                    attempt=attempt,
-                    delay=delay,
-                    error=error,
-                    method=options.method,
-                    path=options.path,
-                ))
+                await on_retry(
+                    RetryInfo(
+                        attempt=attempt,
+                        delay=delay,
+                        error=error,
+                        method=options.method,
+                        path=options.path,
+                    )
+                )
             await asyncio.sleep(delay)
     msg = "unreachable: max_retries must be >= 0"
     raise RuntimeError(msg)

@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
     from lolzteam.runtime.types import ClientConfig, JsonValue, RequestOptions
 
+
 def _serialize_value(key: str, value: object) -> list[tuple[str, str]]:
     """Serialize a single key-value pair into form-encoded pairs."""
     if value is None:
@@ -109,7 +110,10 @@ class HttpClient:
         if options.is_search and self._search_rate_limiter is not None:
             self._search_rate_limiter.acquire()
         return with_retry(
-            lambda: self._execute(options), self._retry_config, options, self._on_retry,
+            lambda: self._execute(options),
+            self._retry_config,
+            options,
+            self._on_retry,
         )
 
     def _execute(self, options: RequestOptions) -> JsonValue:

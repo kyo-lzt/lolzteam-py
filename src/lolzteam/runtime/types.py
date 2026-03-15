@@ -49,11 +49,12 @@ class ClientConfig:
     token: str
     base_url: str = ""
     proxy: ProxyConfig | None = None
-    retry: RetryConfig = field(default_factory=RetryConfig)
+    retry: RetryConfig | None = field(default_factory=RetryConfig)
     rate_limit: RateLimitConfig | None = None
     search_rate_limit: RateLimitConfig | None = None
     on_retry: OnRetryCallback | None = None
     on_retry_async: OnRetryCallbackAsync | None = None
+    timeout: float | None = None  # seconds
 
 
 HttpMethod = Literal["GET", "POST", "PUT", "DELETE", "PATCH"]

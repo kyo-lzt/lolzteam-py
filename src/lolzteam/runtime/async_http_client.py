@@ -21,12 +21,12 @@ def _serialize_value(key: str, value: object) -> list[tuple[str, str]]:
     if value is None:
         return []
     if isinstance(value, bool):
-        return [(key, "true" if value else "false")]
+        return [(key, "1" if value else "0")]
     if isinstance(value, list):
         pairs: list[tuple[str, str]] = []
         for item in value:  # pyright: ignore[reportUnknownVariableType]
             if isinstance(item, bool):
-                pairs.append((key, "true" if item else "false"))
+                pairs.append((key, "1" if item else "0"))
             else:
                 pairs.append((key, str(item)))  # pyright: ignore[reportUnknownArgumentType]
         return pairs
@@ -35,7 +35,7 @@ def _serialize_value(key: str, value: object) -> list[tuple[str, str]]:
         for sub_key, sub_value in value.items():  # pyright: ignore[reportUnknownVariableType]
             if sub_value is not None:
                 if isinstance(sub_value, bool):
-                    pairs.append((f"{key}[{sub_key}]", "true" if sub_value else "false"))
+                    pairs.append((f"{key}[{sub_key}]", "1" if sub_value else "0"))
                 else:
                     pairs.append((f"{key}[{sub_key}]", str(sub_value)))  # pyright: ignore[reportUnknownArgumentType]
         return pairs
@@ -70,7 +70,7 @@ def _split_multipart_body(
         if isinstance(value, bytes):
             files[key] = (key, value, "application/octet-stream")
         elif isinstance(value, bool):
-            data[key] = "true" if value else "false"
+            data[key] = "1" if value else "0"
         else:
             data[key] = str(value)
     return data, files
@@ -102,13 +102,16 @@ class AsyncHttpClient:
             if not parsed.hostname:
                 raise ConfigError("proxy URL has no host")
             proxy = config.proxy.url
-        self._client = httpx.AsyncClient(proxy=proxy)
+        timeout_config = httpx.Timeout(config.timeout) if config.timeout is not None else None
+        self._client = httpx.AsyncClient(proxy=proxy, timeout=timeout_config)
 
     async def request(self, options: RequestOptions) -> JsonValue:
         if self._rate_limiter is not None:
             await self._rate_limiter.async_acquire()
         if options.is_search and self._search_rate_limiter is not None:
             await self._search_rate_limiter.async_acquire()
+        if self._retry_config is None:
+            return await self._execute(options)
         return await async_with_retry(
             lambda: self._execute(options),
             self._retry_config,

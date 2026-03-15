@@ -46,6 +46,12 @@ class NetworkError(LolzteamError):
         super().__init__(message)
         self.__cause__ = cause
 
+    @property
+    def is_transient(self) -> bool:
+        import httpx
+
+        return isinstance(self.__cause__, (httpx.TimeoutException, httpx.ConnectError))
+
 
 class ConfigError(LolzteamError):
     pass
@@ -58,6 +64,6 @@ def create_http_error(status: int, body: object, headers: httpx.Headers) -> Http
         return AuthError(status, body, headers)
     if status == 404:
         return NotFoundError(body, headers)
-    if status in (500, 502, 503):
+    if status in (500, 502, 503, 504):
         return ServerError(status, body, headers)
     return HttpError(status, body, headers)

@@ -5,7 +5,7 @@ import random
 import time
 from typing import TYPE_CHECKING, TypeVar
 
-from lolzteam.runtime.errors import RateLimitError, ServerError
+from lolzteam.runtime.errors import NetworkError, RateLimitError, ServerError
 from lolzteam.runtime.types import RetryInfo
 
 if TYPE_CHECKING:
@@ -24,7 +24,9 @@ _T = TypeVar("_T")
 def is_retryable(error: Exception) -> bool:
     if isinstance(error, RateLimitError):
         return True
-    return bool(isinstance(error, ServerError) and error.status in (502, 503))
+    if isinstance(error, ServerError) and error.status in (502, 503, 504):
+        return True
+    return isinstance(error, NetworkError) and error.is_transient
 
 
 def compute_delay(attempt: int, config: RetryConfig, error: Exception) -> float:

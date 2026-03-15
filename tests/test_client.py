@@ -76,12 +76,12 @@ class TestForumClient:
     def test_proxy_config(self) -> None:
         with patch("lolzteam.runtime.http_client.httpx.Client") as mock_cls:
             ForumClient(token="t", proxy="http://proxy:8080")
-            mock_cls.assert_called_once_with(proxy="http://proxy:8080")
+            mock_cls.assert_called_once_with(proxy="http://proxy:8080", timeout=None)
 
     def test_proxy_none_by_default(self) -> None:
         with patch("lolzteam.runtime.http_client.httpx.Client") as mock_cls:
             ForumClient(token="t")
-            mock_cls.assert_called_once_with(proxy=None)
+            mock_cls.assert_called_once_with(proxy=None, timeout=None)
 
     def test_context_manager(self) -> None:
         with patch("lolzteam.runtime.http_client.httpx.Client"), ForumClient(token="t") as client:
@@ -220,7 +220,7 @@ class TestAsyncForumClient:
     def test_proxy_config(self) -> None:
         with patch("lolzteam.runtime.async_http_client.httpx.AsyncClient") as mock_cls:
             AsyncForumClient(token="t", proxy="http://proxy:8080")
-            mock_cls.assert_called_once_with(proxy="http://proxy:8080")
+            mock_cls.assert_called_once_with(proxy="http://proxy:8080", timeout=None)
 
     async def test_context_manager(self) -> None:
         mock_async_client = AsyncMock()
@@ -323,7 +323,7 @@ class TestMarketClient:
     def test_proxy_config(self) -> None:
         with patch("lolzteam.runtime.http_client.httpx.Client") as mock_cls:
             MarketClient(token="t", proxy="socks5://proxy:1080")
-            mock_cls.assert_called_once_with(proxy="socks5://proxy:1080")
+            mock_cls.assert_called_once_with(proxy="socks5://proxy:1080", timeout=None)
 
     def test_context_manager(self) -> None:
         with patch("lolzteam.runtime.http_client.httpx.Client"), MarketClient(token="t") as client:
@@ -415,7 +415,7 @@ class TestAsyncMarketClient:
     def test_proxy_config(self) -> None:
         with patch("lolzteam.runtime.async_http_client.httpx.AsyncClient") as mock_cls:
             AsyncMarketClient(token="t", proxy="http://proxy:3128")
-            mock_cls.assert_called_once_with(proxy="http://proxy:3128")
+            mock_cls.assert_called_once_with(proxy="http://proxy:3128", timeout=None)
 
     async def test_context_manager(self) -> None:
         mock_async_client = AsyncMock()
@@ -477,7 +477,7 @@ class TestConfig:
     def test_no_proxy_by_default(self) -> None:
         with patch("lolzteam.runtime.http_client.httpx.Client") as mock_cls:
             ForumClient(token="t")
-            mock_cls.assert_called_once_with(proxy=None)
+            mock_cls.assert_called_once_with(proxy=None, timeout=None)
 
     def test_retry_defaults(self) -> None:
         with patch("lolzteam.runtime.http_client.httpx.Client"):

@@ -43,9 +43,9 @@ class TestIsRetryable:
         err = ServerError(500, body={}, headers=EMPTY_HEADERS)
         assert is_retryable(err) is False
 
-    def test_server_error_504_is_not_retryable(self) -> None:
+    def test_server_error_504_is_retryable(self) -> None:
         err = ServerError(504, body={}, headers=EMPTY_HEADERS)
-        assert is_retryable(err) is False
+        assert is_retryable(err) is True
 
     def test_auth_error_is_not_retryable(self) -> None:
         err = AuthError(401, body={}, headers=EMPTY_HEADERS)

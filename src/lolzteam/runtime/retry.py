@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import inspect
 import random
 import time
 from typing import TYPE_CHECKING, TypeVar
@@ -93,7 +94,7 @@ async def async_with_retry(
                     method=options.method,
                     path=options.path,
                 )
-                if asyncio.iscoroutinefunction(on_retry):
+                if inspect.iscoroutinefunction(on_retry):
                     await on_retry(info)
                 else:
                     on_retry(info)

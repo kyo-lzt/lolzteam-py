@@ -425,17 +425,13 @@ def emit_combined_file(
     lines.append("    ) -> None:")
     lines.append("        if config is None:")
     lines.append("            if token is None:")
-    lines.append(
-        '                raise ConfigError("either config or token must be provided")'
-    )
+    lines.append('                raise ConfigError("either config or token must be provided")')
     lines.append("            import warnings")
     lines.append("            warnings.warn(")
     lines.append(
         f'                "{client_name}(token=...) is deprecated, "',
     )
-    lines.append(
-        f'                "use {client_name}(ClientConfig(token=..., ...)) instead",'
-    )
+    lines.append(f'                "use {client_name}(ClientConfig(token=..., ...)) instead",')
     lines.append("                DeprecationWarning,")
     lines.append("                stacklevel=2,")
     lines.append("            )")
@@ -448,8 +444,7 @@ def emit_combined_file(
         "max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),"
     )
     lines.append(
-        "                rate_limit=RateLimitConfig("
-        "requests_per_minute=requests_per_minute),"
+        "                rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),"
     )
     if default_search_rate_limit is not None:
         lines.append(
@@ -496,9 +491,7 @@ def emit_combined_file(
     lines.append("    ) -> None:")
     lines.append("        if config is None:")
     lines.append("            if token is None:")
-    lines.append(
-        '                raise ConfigError("either config or token must be provided")'
-    )
+    lines.append('                raise ConfigError("either config or token must be provided")')
     lines.append("            import warnings")
     lines.append("            warnings.warn(")
     lines.append(
@@ -519,8 +512,7 @@ def emit_combined_file(
         "max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),"
     )
     lines.append(
-        "                rate_limit=RateLimitConfig("
-        "requests_per_minute=requests_per_minute),"
+        "                rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),"
     )
     if default_search_rate_limit is not None:
         lines.append(

@@ -5,8 +5,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from codegen.transforms.types import (
+    drain_inline_types,
     emit_typed_dict_fields,
     generate_typed_dict,
+    reset_inline_types,
 )
 from codegen.utils.naming import (
     build_type_name,
@@ -84,7 +86,11 @@ def _emit_response_type(group: str, method: MethodDefinition) -> tuple[str, str]
         props = schema.get("properties")
         if isinstance(props, dict) and len(props) > 0:
             # Spec is {} because all $refs are already resolved by the parser
+            reset_inline_types()
             code = generate_typed_dict(type_name, schema, {})
+            inline_parts = drain_inline_types()
+            if inline_parts:
+                code = "\n\n\n".join(inline_parts) + "\n\n\n" + code
             return type_name, code
 
     return type_name, f"{type_name} = {method.response_type}"
@@ -122,9 +128,14 @@ def emit_types_file(
         sections.append("# ─── Component Schemas ────────────────────────────────────────")
 
         for name, schema in component_schemas.items():
-            sections.append("")
-            sections.append("")
+            reset_inline_types()
             code = generate_typed_dict(name, schema, {})
+            for inline_code in drain_inline_types():
+                sections.append("")
+                sections.append("")
+                sections.append(inline_code)
+            sections.append("")
+            sections.append("")
             sections.append(code)
 
     # Operation types per group
@@ -155,7 +166,16 @@ def emit_types_file(
                 sections.append(code)
 
     sections.append("")
-    return "\n".join(sections)
+    result = "\n".join(sections)
+
+    # Patch import to include Required if functional-form TypedDicts use it
+    if "Required[" in result:
+        result = result.replace(
+            "from typing import Literal, TypedDict",
+            "from typing import Literal, Required, TypedDict",
+        )
+
+    return result
 
 
 # ─── Group Class Emission ────────────────────────────────────────────────────

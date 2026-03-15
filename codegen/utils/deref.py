@@ -55,14 +55,23 @@ def deref(value: object, spec: Spec, visited: set[str] | None = None) -> object:
     return value
 
 
-def deref_shallow(value: object, spec: Spec) -> object:
+def deref_shallow(
+    value: object,
+    spec: Spec,
+    *,
+    _visited: set[str] | None = None,
+) -> object:
     """Shallow $ref resolution -- only resolves the top-level ref, does not recurse."""
     if _is_ref_object(value):
         assert isinstance(value, dict)
         ref = value["$ref"]
         assert isinstance(ref, str)
+        seen = _visited if _visited is not None else set()
+        if ref in seen:
+            return value
+        seen.add(ref)
         resolved = resolve_ref(ref, spec)
         if _is_ref_object(resolved):
-            return deref_shallow(resolved, spec)
+            return deref_shallow(resolved, spec, _visited=seen)
         return resolved
     return value

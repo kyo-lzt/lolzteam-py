@@ -3,11 +3,29 @@
 from __future__ import annotations
 
 import keyword
+import re
 
 from codegen.utils.deref import deref_shallow
 
 Spec = dict[str, object]
 SchemaObject = dict[str, object]
+
+# Module-level collector for inline TypedDicts generated during type resolution.
+# The emitter should call `reset_inline_types()` before and `drain_inline_types()`
+# after processing each schema group.
+_inline_typed_dicts: list[str] = []
+
+
+def reset_inline_types() -> None:
+    """Clear the inline TypedDict collector."""
+    _inline_typed_dicts.clear()
+
+
+def drain_inline_types() -> list[str]:
+    """Return and clear all collected inline TypedDicts."""
+    result = list(_inline_typed_dicts)
+    _inline_typed_dicts.clear()
+    return result
 
 
 def _primitive_type(t: str, fmt: str | None = None) -> str:
@@ -19,7 +37,7 @@ def _primitive_type(t: str, fmt: str | None = None) -> str:
         case "integer":
             return "int"
         case "number":
-            return "int | float"
+            return "float"
         case "boolean":
             return "bool"
         case "null":
@@ -28,8 +46,16 @@ def _primitive_type(t: str, fmt: str | None = None) -> str:
             return "object"
 
 
-def schema_to_type_string(schema: SchemaObject | None, spec: Spec) -> str:
-    """Convert an OpenAPI schema to a Python type string."""
+def schema_to_type_string(
+    schema: SchemaObject | None,
+    spec: Spec,
+    parent_name: str = "",
+) -> str:
+    """Convert an OpenAPI schema to a Python type string.
+
+    When ``parent_name`` is provided and the schema is an object with properties,
+    an inline TypedDict is generated and collected via ``_inline_typed_dicts``.
+    """
     if not schema or len(schema) == 0:
         return "object"
 
@@ -40,7 +66,7 @@ def schema_to_type_string(schema: SchemaObject | None, spec: Spec) -> str:
             return ref.rsplit("/", 1)[-1]
         resolved = deref_shallow(schema, spec)
         if isinstance(resolved, dict):
-            return schema_to_type_string(resolved, spec)
+            return schema_to_type_string(resolved, spec, parent_name)
         return "object"
 
     # enum -> Literal union (skip huge enums, use base type instead)
@@ -89,7 +115,7 @@ def schema_to_type_string(schema: SchemaObject | None, spec: Spec) -> str:
             merged: dict[str, object] = {"properties": merged_props}
             if merged_required:
                 merged["required"] = merged_required
-            return schema_to_type_string(merged, spec)
+            return schema_to_type_string(merged, spec, parent_name)
         # No properties found — use first non-trivial type
         for s in all_of:
             if isinstance(s, dict) and len(s) > 0:
@@ -109,23 +135,31 @@ def schema_to_type_string(schema: SchemaObject | None, spec: Spec) -> str:
     if isinstance(schema_type, str):
         if schema_type == "array":
             items = schema.get("items")
-            item_type = schema_to_type_string(items, spec) if isinstance(items, dict) else "object"
+            item_type = (
+                schema_to_type_string(items, spec, parent_name)
+                if isinstance(items, dict)
+                else "object"
+            )
             return f"list[{item_type}]"
 
         if schema_type == "object" or schema.get("properties"):
-            return _object_type(schema, spec)
+            return _object_type(schema, spec, parent_name)
 
         fmt = schema.get("format")
         return _primitive_type(schema_type, fmt if isinstance(fmt, str) else None)
 
     # Has properties but no explicit type
     if schema.get("properties"):
-        return _object_type(schema, spec)
+        return _object_type(schema, spec, parent_name)
 
     return "object"
 
 
-def _object_type(schema: SchemaObject, spec: Spec) -> str:
+def _object_type(
+    schema: SchemaObject,
+    spec: Spec,
+    parent_name: str = "",
+) -> str:
     props = schema.get("properties")
     if not isinstance(props, dict) or len(props) == 0:
         additional = schema.get("additionalProperties")
@@ -133,7 +167,44 @@ def _object_type(schema: SchemaObject, spec: Spec) -> str:
             val_type = schema_to_type_string(additional, spec)
             return f"dict[str, {val_type}]"
         return "dict[str, object]"
+
+    # Has properties — generate inline TypedDict
+    if parent_name:
+        td_name = parent_name
+        _collect_inline_typed_dict(td_name, schema, spec)
+        return td_name
+
     return "dict[str, object]"
+
+
+def _capitalize_first(s: str) -> str:
+    if not s:
+        return s
+    return s[0].upper() + s[1:]
+
+
+def _sanitize_identifier(name: str) -> str:
+    """Turn an arbitrary string into a valid Python identifier fragment.
+
+    Splits on non-alphanumeric characters and PascalCases the parts.
+    """
+    parts = re.split(r"[^0-9a-zA-Z_]+", name)
+    return "".join(_capitalize_first(p) for p in parts if p)
+
+
+def _prop_to_inline_name(parent: str, prop_name: str) -> str:
+    """Build an inline TypedDict name from parent and property name."""
+    return parent + _sanitize_identifier(prop_name)
+
+
+def _collect_inline_typed_dict(
+    name: str,
+    schema: SchemaObject,
+    spec: Spec,
+) -> None:
+    """Generate a TypedDict for an inline object and add it to the collector."""
+    code = generate_typed_dict(name, schema, spec)
+    _inline_typed_dicts.append(code)
 
 
 def schema_to_type(schema: SchemaObject | None) -> str:
@@ -172,7 +243,8 @@ def generate_typed_dict(
     for prop_name, prop_schema in props.items():
         if not isinstance(prop_schema, dict):
             continue
-        prop_type = schema_to_type_string(prop_schema, spec)
+        inline_name = _prop_to_inline_name(name, prop_name)
+        prop_type = schema_to_type_string(prop_schema, spec, inline_name)
         if prop_name in required_set:
             required_fields.append((prop_name, prop_type))
         else:

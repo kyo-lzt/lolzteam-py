@@ -42,6 +42,15 @@ def extract_response_info(operation: dict[str, object], spec: Spec) -> ResponseI
     if raw_schema is None:
         return ResponseInfo(type_string="object", schema=None)
 
+    # If raw schema is a $ref to a component schema, return the name directly
+    if isinstance(raw_schema, dict):
+        ref = raw_schema.get("$ref")
+        if isinstance(ref, str) and ref.startswith("#/components/schemas/"):
+            schema_name = ref.rsplit("/", 1)[-1]
+            resolved = deref_shallow(raw_schema, spec)
+            schema = resolved if isinstance(resolved, dict) else None
+            return ResponseInfo(type_string=schema_name, schema=schema)
+
     schema = deref_shallow(raw_schema, spec)
     if not isinstance(schema, dict):
         return ResponseInfo(type_string="object", schema=None)

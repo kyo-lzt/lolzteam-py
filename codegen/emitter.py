@@ -331,6 +331,28 @@ def _emit_group_classes(group: ParsedGroup, *, is_search: bool = False) -> str:
 # ─── Combined File Emission ──────────────────────────────────────────────────
 
 
+def _collect_referenced_schema_names(
+    groups: list[ParsedGroup],
+    component_schema_names: frozenset[str],
+) -> list[str]:
+    """Find component schema type names used directly in __init__.py method signatures.
+
+    Only path params appear as bare types in method signatures. Query params and body
+    properties are wrapped in TypedDicts (defined in types.py), so their schema
+    references are resolved there, not in __init__.py.
+    """
+    import re
+
+    found: set[str] = set()
+    for group in groups:
+        for method in group.methods:
+            for param in method.params.path_params:
+                for name in component_schema_names:
+                    if re.search(r'(?<!\w)' + re.escape(name) + r'(?!\w)', param.type):
+                        found.add(name)
+    return sorted(found)
+
+
 def emit_combined_file(
     groups: list[ParsedGroup],
     client_name: str,
@@ -339,6 +361,7 @@ def emit_combined_file(
     *,
     search_groups: frozenset[str] = frozenset(),
     default_search_rate_limit: int | None = None,
+    component_schema_names: frozenset[str] = frozenset(),
 ) -> str:
     """Generate __init__.py with all group classes + sync/async client classes."""
     async_client_name = f"Async{client_name}"
@@ -362,6 +385,10 @@ def emit_combined_file(
             for param in method.params.path_params:
                 if "Literal[" in param.type:
                     needs_literal = True
+
+    # Add component schema types referenced in method signatures
+    referenced_schemas = _collect_referenced_schema_names(groups, component_schema_names)
+    type_imports.extend(referenced_schemas)
 
     # Standard library imports
     if needs_literal:

@@ -223,6 +223,7 @@ if TYPE_CHECKING:
         ThreadsUnreadParams,
         ThreadsUnreadResponse,
         ThreadsUnstarResponse,
+        UserIDModel,
         UsersAvatarCropBody,
         UsersAvatarCropResponse,
         UsersAvatarDeleteResponse,

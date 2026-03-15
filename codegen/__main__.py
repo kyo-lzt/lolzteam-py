@@ -71,6 +71,7 @@ def generate_api(config: ApiConfig) -> None:
         config.default_rate_limit,
         search_groups=config.search_groups,
         default_search_rate_limit=config.default_search_rate_limit,
+        component_schema_names=frozenset(result.component_schemas.keys()),
     )
     (config.output_dir / "__init__.py").write_text(init_content, encoding="utf-8")
     print("  __init__.py")

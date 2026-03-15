@@ -1411,7 +1411,9 @@ class UsersApi:
             )
         )  # type: ignore[return-value]
 
-    def get(self, user_id: str | int, *, params: UsersGetParams | None = None) -> UsersGetResponse:
+    def get(
+        self, user_id: UserIDModel, *, params: UsersGetParams | None = None
+    ) -> UsersGetResponse:
         return self._http.request(
             RequestOptions(
                 method="GET",
@@ -1420,7 +1422,7 @@ class UsersApi:
             )
         )  # type: ignore[return-value]
 
-    def edit(self, user_id: str | int, *, body: UsersEditBody | None = None) -> UsersEditResponse:
+    def edit(self, user_id: UserIDModel, *, body: UsersEditBody | None = None) -> UsersEditResponse:
         return self._http.request(
             RequestOptions(
                 method="PUT",
@@ -1431,7 +1433,7 @@ class UsersApi:
         )  # type: ignore[return-value]
 
     def claims(
-        self, user_id: str | int, *, params: UsersClaimsParams | None = None
+        self, user_id: UserIDModel, *, params: UsersClaimsParams | None = None
     ) -> UsersClaimsResponse:
         return self._http.request(
             RequestOptions(
@@ -1442,7 +1444,7 @@ class UsersApi:
         )  # type: ignore[return-value]
 
     def avatar_upload(
-        self, user_id: str | int, *, body: UsersAvatarUploadBody
+        self, user_id: UserIDModel, *, body: UsersAvatarUploadBody
     ) -> UsersAvatarUploadResponse:
         return self._http.request(
             RequestOptions(
@@ -1453,7 +1455,7 @@ class UsersApi:
             )
         )  # type: ignore[return-value]
 
-    def avatar_delete(self, user_id: str | int) -> UsersAvatarDeleteResponse:
+    def avatar_delete(self, user_id: UserIDModel) -> UsersAvatarDeleteResponse:
         return self._http.request(
             RequestOptions(
                 method="DELETE",
@@ -1462,7 +1464,7 @@ class UsersApi:
         )  # type: ignore[return-value]
 
     def avatar_crop(
-        self, user_id: str | int, *, body: UsersAvatarCropBody | None = None
+        self, user_id: UserIDModel, *, body: UsersAvatarCropBody | None = None
     ) -> UsersAvatarCropResponse:
         return self._http.request(
             RequestOptions(
@@ -1474,7 +1476,7 @@ class UsersApi:
         )  # type: ignore[return-value]
 
     def background_upload(
-        self, user_id: str | int, *, body: UsersBackgroundUploadBody
+        self, user_id: UserIDModel, *, body: UsersBackgroundUploadBody
     ) -> UsersBackgroundUploadResponse:
         return self._http.request(
             RequestOptions(
@@ -1485,7 +1487,7 @@ class UsersApi:
             )
         )  # type: ignore[return-value]
 
-    def background_delete(self, user_id: str | int) -> UsersBackgroundDeleteResponse:
+    def background_delete(self, user_id: UserIDModel) -> UsersBackgroundDeleteResponse:
         return self._http.request(
             RequestOptions(
                 method="DELETE",
@@ -1494,7 +1496,7 @@ class UsersApi:
         )  # type: ignore[return-value]
 
     def background_crop(
-        self, user_id: str | int, *, body: UsersBackgroundCropBody
+        self, user_id: UserIDModel, *, body: UsersBackgroundCropBody
     ) -> UsersBackgroundCropResponse:
         return self._http.request(
             RequestOptions(
@@ -1506,7 +1508,7 @@ class UsersApi:
         )  # type: ignore[return-value]
 
     def followers(
-        self, user_id: str | int, *, params: UsersFollowersParams | None = None
+        self, user_id: UserIDModel, *, params: UsersFollowersParams | None = None
     ) -> UsersFollowersResponse:
         return self._http.request(
             RequestOptions(
@@ -1516,7 +1518,7 @@ class UsersApi:
             )
         )  # type: ignore[return-value]
 
-    def follow(self, user_id: str | int) -> UsersFollowResponse:
+    def follow(self, user_id: UserIDModel) -> UsersFollowResponse:
         return self._http.request(
             RequestOptions(
                 method="POST",
@@ -1524,7 +1526,7 @@ class UsersApi:
             )
         )  # type: ignore[return-value]
 
-    def unfollow(self, user_id: str | int) -> UsersUnfollowResponse:
+    def unfollow(self, user_id: UserIDModel) -> UsersUnfollowResponse:
         return self._http.request(
             RequestOptions(
                 method="DELETE",
@@ -1533,7 +1535,7 @@ class UsersApi:
         )  # type: ignore[return-value]
 
     def followings(
-        self, user_id: str | int, *, params: UsersFollowingsParams | None = None
+        self, user_id: UserIDModel, *, params: UsersFollowingsParams | None = None
     ) -> UsersFollowingsResponse:
         return self._http.request(
             RequestOptions(
@@ -1544,7 +1546,7 @@ class UsersApi:
         )  # type: ignore[return-value]
 
     def likes(
-        self, user_id: str | int, *, params: UsersLikesParams | None = None
+        self, user_id: UserIDModel, *, params: UsersLikesParams | None = None
     ) -> UsersLikesResponse:
         return self._http.request(
             RequestOptions(
@@ -1563,7 +1565,7 @@ class UsersApi:
             )
         )  # type: ignore[return-value]
 
-    def ignore(self, user_id: str | int) -> UsersIgnoreResponse:
+    def ignore(self, user_id: UserIDModel) -> UsersIgnoreResponse:
         return self._http.request(
             RequestOptions(
                 method="POST",
@@ -1572,7 +1574,7 @@ class UsersApi:
         )  # type: ignore[return-value]
 
     def ignoreedit(
-        self, user_id: str | int, *, params: UsersIgnoreeditParams | None = None
+        self, user_id: UserIDModel, *, params: UsersIgnoreeditParams | None = None
     ) -> UsersIgnoreeditResponse:
         return self._http.request(
             RequestOptions(
@@ -1582,7 +1584,7 @@ class UsersApi:
             )
         )  # type: ignore[return-value]
 
-    def unignore(self, user_id: str | int) -> UsersUnignoreResponse:
+    def unignore(self, user_id: UserIDModel) -> UsersUnignoreResponse:
         return self._http.request(
             RequestOptions(
                 method="DELETE",
@@ -1591,7 +1593,7 @@ class UsersApi:
         )  # type: ignore[return-value]
 
     def contents(
-        self, user_id: str | int, *, params: UsersContentsParams | None = None
+        self, user_id: UserIDModel, *, params: UsersContentsParams | None = None
     ) -> UsersContentsResponse:
         return self._http.request(
             RequestOptions(
@@ -1601,7 +1603,7 @@ class UsersApi:
             )
         )  # type: ignore[return-value]
 
-    def trophies(self, user_id: str | int) -> UsersTrophiesResponse:
+    def trophies(self, user_id: UserIDModel) -> UsersTrophiesResponse:
         return self._http.request(
             RequestOptions(
                 method="GET",
@@ -1665,7 +1667,7 @@ class AsyncUsersApi:
         )  # type: ignore[return-value]
 
     async def get(
-        self, user_id: str | int, *, params: UsersGetParams | None = None
+        self, user_id: UserIDModel, *, params: UsersGetParams | None = None
     ) -> UsersGetResponse:
         return await self._http.request(
             RequestOptions(
@@ -1676,7 +1678,7 @@ class AsyncUsersApi:
         )  # type: ignore[return-value]
 
     async def edit(
-        self, user_id: str | int, *, body: UsersEditBody | None = None
+        self, user_id: UserIDModel, *, body: UsersEditBody | None = None
     ) -> UsersEditResponse:
         return await self._http.request(
             RequestOptions(
@@ -1688,7 +1690,7 @@ class AsyncUsersApi:
         )  # type: ignore[return-value]
 
     async def claims(
-        self, user_id: str | int, *, params: UsersClaimsParams | None = None
+        self, user_id: UserIDModel, *, params: UsersClaimsParams | None = None
     ) -> UsersClaimsResponse:
         return await self._http.request(
             RequestOptions(
@@ -1699,7 +1701,7 @@ class AsyncUsersApi:
         )  # type: ignore[return-value]
 
     async def avatar_upload(
-        self, user_id: str | int, *, body: UsersAvatarUploadBody
+        self, user_id: UserIDModel, *, body: UsersAvatarUploadBody
     ) -> UsersAvatarUploadResponse:
         return await self._http.request(
             RequestOptions(
@@ -1710,7 +1712,7 @@ class AsyncUsersApi:
             )
         )  # type: ignore[return-value]
 
-    async def avatar_delete(self, user_id: str | int) -> UsersAvatarDeleteResponse:
+    async def avatar_delete(self, user_id: UserIDModel) -> UsersAvatarDeleteResponse:
         return await self._http.request(
             RequestOptions(
                 method="DELETE",
@@ -1719,7 +1721,7 @@ class AsyncUsersApi:
         )  # type: ignore[return-value]
 
     async def avatar_crop(
-        self, user_id: str | int, *, body: UsersAvatarCropBody | None = None
+        self, user_id: UserIDModel, *, body: UsersAvatarCropBody | None = None
     ) -> UsersAvatarCropResponse:
         return await self._http.request(
             RequestOptions(
@@ -1731,7 +1733,7 @@ class AsyncUsersApi:
         )  # type: ignore[return-value]
 
     async def background_upload(
-        self, user_id: str | int, *, body: UsersBackgroundUploadBody
+        self, user_id: UserIDModel, *, body: UsersBackgroundUploadBody
     ) -> UsersBackgroundUploadResponse:
         return await self._http.request(
             RequestOptions(
@@ -1742,7 +1744,7 @@ class AsyncUsersApi:
             )
         )  # type: ignore[return-value]
 
-    async def background_delete(self, user_id: str | int) -> UsersBackgroundDeleteResponse:
+    async def background_delete(self, user_id: UserIDModel) -> UsersBackgroundDeleteResponse:
         return await self._http.request(
             RequestOptions(
                 method="DELETE",
@@ -1751,7 +1753,7 @@ class AsyncUsersApi:
         )  # type: ignore[return-value]
 
     async def background_crop(
-        self, user_id: str | int, *, body: UsersBackgroundCropBody
+        self, user_id: UserIDModel, *, body: UsersBackgroundCropBody
     ) -> UsersBackgroundCropResponse:
         return await self._http.request(
             RequestOptions(
@@ -1763,7 +1765,7 @@ class AsyncUsersApi:
         )  # type: ignore[return-value]
 
     async def followers(
-        self, user_id: str | int, *, params: UsersFollowersParams | None = None
+        self, user_id: UserIDModel, *, params: UsersFollowersParams | None = None
     ) -> UsersFollowersResponse:
         return await self._http.request(
             RequestOptions(
@@ -1773,7 +1775,7 @@ class AsyncUsersApi:
             )
         )  # type: ignore[return-value]
 
-    async def follow(self, user_id: str | int) -> UsersFollowResponse:
+    async def follow(self, user_id: UserIDModel) -> UsersFollowResponse:
         return await self._http.request(
             RequestOptions(
                 method="POST",
@@ -1781,7 +1783,7 @@ class AsyncUsersApi:
             )
         )  # type: ignore[return-value]
 
-    async def unfollow(self, user_id: str | int) -> UsersUnfollowResponse:
+    async def unfollow(self, user_id: UserIDModel) -> UsersUnfollowResponse:
         return await self._http.request(
             RequestOptions(
                 method="DELETE",
@@ -1790,7 +1792,7 @@ class AsyncUsersApi:
         )  # type: ignore[return-value]
 
     async def followings(
-        self, user_id: str | int, *, params: UsersFollowingsParams | None = None
+        self, user_id: UserIDModel, *, params: UsersFollowingsParams | None = None
     ) -> UsersFollowingsResponse:
         return await self._http.request(
             RequestOptions(
@@ -1801,7 +1803,7 @@ class AsyncUsersApi:
         )  # type: ignore[return-value]
 
     async def likes(
-        self, user_id: str | int, *, params: UsersLikesParams | None = None
+        self, user_id: UserIDModel, *, params: UsersLikesParams | None = None
     ) -> UsersLikesResponse:
         return await self._http.request(
             RequestOptions(
@@ -1820,7 +1822,7 @@ class AsyncUsersApi:
             )
         )  # type: ignore[return-value]
 
-    async def ignore(self, user_id: str | int) -> UsersIgnoreResponse:
+    async def ignore(self, user_id: UserIDModel) -> UsersIgnoreResponse:
         return await self._http.request(
             RequestOptions(
                 method="POST",
@@ -1829,7 +1831,7 @@ class AsyncUsersApi:
         )  # type: ignore[return-value]
 
     async def ignoreedit(
-        self, user_id: str | int, *, params: UsersIgnoreeditParams | None = None
+        self, user_id: UserIDModel, *, params: UsersIgnoreeditParams | None = None
     ) -> UsersIgnoreeditResponse:
         return await self._http.request(
             RequestOptions(
@@ -1839,7 +1841,7 @@ class AsyncUsersApi:
             )
         )  # type: ignore[return-value]
 
-    async def unignore(self, user_id: str | int) -> UsersUnignoreResponse:
+    async def unignore(self, user_id: UserIDModel) -> UsersUnignoreResponse:
         return await self._http.request(
             RequestOptions(
                 method="DELETE",
@@ -1848,7 +1850,7 @@ class AsyncUsersApi:
         )  # type: ignore[return-value]
 
     async def contents(
-        self, user_id: str | int, *, params: UsersContentsParams | None = None
+        self, user_id: UserIDModel, *, params: UsersContentsParams | None = None
     ) -> UsersContentsResponse:
         return await self._http.request(
             RequestOptions(
@@ -1858,7 +1860,7 @@ class AsyncUsersApi:
             )
         )  # type: ignore[return-value]
 
-    async def trophies(self, user_id: str | int) -> UsersTrophiesResponse:
+    async def trophies(self, user_id: UserIDModel) -> UsersTrophiesResponse:
         return await self._http.request(
             RequestOptions(
                 method="GET",
@@ -1896,7 +1898,7 @@ class ProfilePostsApi:
         self._http = http
 
     def list(
-        self, user_id: str | int, *, params: ProfilePostsListParams | None = None
+        self, user_id: UserIDModel, *, params: ProfilePostsListParams | None = None
     ) -> ProfilePostsListResponse:
         return self._http.request(
             RequestOptions(
@@ -2082,7 +2084,7 @@ class AsyncProfilePostsApi:
         self._http = http
 
     async def list(
-        self, user_id: str | int, *, params: ProfilePostsListParams | None = None
+        self, user_id: UserIDModel, *, params: ProfilePostsListParams | None = None
     ) -> ProfilePostsListResponse:
         return await self._http.request(
             RequestOptions(

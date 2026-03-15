@@ -33,8 +33,11 @@ def schema_to_type_string(schema: SchemaObject | None, spec: Spec) -> str:
     if not schema or len(schema) == 0:
         return "object"
 
-    # $ref -> resolve and convert
+    # $ref -> component schema refs emit named type, others resolve and convert
     if "$ref" in schema and isinstance(schema["$ref"], str):
+        ref = schema["$ref"]
+        if ref.startswith("#/components/schemas/"):
+            return ref.rsplit("/", 1)[-1]
         resolved = deref_shallow(schema, spec)
         if isinstance(resolved, dict):
             return schema_to_type_string(resolved, spec)
@@ -68,9 +71,26 @@ def schema_to_type_string(schema: SchemaObject | None, spec: Spec) -> str:
         types = [schema_to_type_string(s, spec) for s in any_of if isinstance(s, dict)]
         return " | ".join(types) if types else "object"
 
-    # allOf -> use first non-trivial (Python has no intersection types)
+    # allOf -> merge all schemas' properties into a single dict type
     all_of = schema.get("allOf")
     if isinstance(all_of, list) and len(all_of) > 0:
+        merged_props: dict[str, object] = {}
+        merged_required: list[str] = []
+        for s in all_of:
+            if not isinstance(s, dict):
+                continue
+            props = s.get("properties")
+            if isinstance(props, dict):
+                merged_props.update(props)
+            req = s.get("required")
+            if isinstance(req, list):
+                merged_required.extend(r for r in req if isinstance(r, str))
+        if merged_props:
+            merged: dict[str, object] = {"properties": merged_props}
+            if merged_required:
+                merged["required"] = merged_required
+            return schema_to_type_string(merged, spec)
+        # No properties found — use first non-trivial type
         for s in all_of:
             if isinstance(s, dict) and len(s) > 0:
                 t = schema_to_type_string(s, spec)

@@ -189,7 +189,7 @@ class Resp_ProfilePostModel(TypedDict):
     post_is_sticked: bool
     links: dict[str, object]
     permissions: dict[str, object]
-    timeline_user: dict[str, object]
+    timeline_user: Resp_UserModel
 
 
 class Resp_ProfilePostCommentModel(TypedDict):
@@ -295,7 +295,7 @@ class AssetsCssParams(TypedDict, total=False):
 
 class AssetsCssResponse(TypedDict):
     contents: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── CategoriesApi Types ────────────────────────────────────────
@@ -310,12 +310,12 @@ class CategoriesListParams(TypedDict, total=False):
 class CategoriesListResponse(TypedDict):
     categories: list[dict[str, object]]
     categories_total: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class CategoriesGetResponse(TypedDict):
     category: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── ForumsApi Types ────────────────────────────────────────
@@ -331,23 +331,23 @@ class ForumsListResponse(TypedDict):
     forums: list[dict[str, object]]
     forums_total: int
     tabs: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ForumsGroupedResponse(TypedDict):
     data: dict[str, object]
     tabs: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ForumsGetResponse(TypedDict):
     forum: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ForumsFollowersResponse(TypedDict):
     users: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ForumsFollowBody(TypedDict, total=False):
@@ -361,13 +361,13 @@ class ForumsFollowBody(TypedDict, total=False):
 class ForumsFollowResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ForumsUnfollowResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ForumsFollowedParams(TypedDict, total=False):
@@ -376,7 +376,7 @@ class ForumsFollowedParams(TypedDict, total=False):
 
 class ForumsFollowedResponse(TypedDict):
     forums: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ForumsGetfeedoptionsResponse(TypedDict):
@@ -384,7 +384,7 @@ class ForumsGetfeedoptionsResponse(TypedDict):
     excluded_forums_ids: list[int]
     default_excluded_forums_ids: list[int]
     keywords: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ForumsEditfeedoptionsBody(TypedDict, total=False):
@@ -395,7 +395,7 @@ class ForumsEditfeedoptionsBody(TypedDict, total=False):
 class ForumsEditfeedoptionsResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── LinksApi Types ────────────────────────────────────────
@@ -404,9 +404,9 @@ class ForumsEditfeedoptionsResponse(TypedDict, total=False):
 LinksListResponse = TypedDict(
     "LinksListResponse",
     {
-        "link-forums": list[dict[str, object]],
+        "link-forums": list[Resp_LinkModel],
         "link-forums_total": int,
-        "system_info": dict[str, object],
+        "system_info": Resp_SystemInfo,
     },
 )
 
@@ -414,8 +414,8 @@ LinksListResponse = TypedDict(
 LinksGetResponse = TypedDict(
     "LinksGetResponse",
     {
-        "link-forum": dict[str, object],
-        "system_info": dict[str, object],
+        "link-forum": Resp_LinkModel,
+        "system_info": Resp_SystemInfo,
     },
 )
 
@@ -431,12 +431,12 @@ class PagesListParams(TypedDict, total=False):
 class PagesListResponse(TypedDict):
     pages: list[dict[str, object]]
     pages_total: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PagesGetResponse(TypedDict):
     page: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── NavigationApi Types ────────────────────────────────────────
@@ -449,7 +449,7 @@ class NavigationListParams(TypedDict, total=False):
 class NavigationListResponse(TypedDict):
     elements: list[dict[str, object]]
     elements_count: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── ThreadsApi Types ────────────────────────────────────────
@@ -489,11 +489,11 @@ ThreadsListParams = TypedDict(
 
 
 class ThreadsListResponse(TypedDict):
-    threads: list[dict[str, object]]
+    threads: list[Resp_ThreadModel]
     forum: dict[str, object]
     threads_total: int
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _ThreadsCreateBodyRequired(TypedDict):
@@ -519,8 +519,8 @@ class ThreadsCreateBody(_ThreadsCreateBodyRequired, total=False):
 
 
 class ThreadsCreateResponse(TypedDict):
-    thread: dict[str, object]
-    system_info: dict[str, object]
+    thread: Resp_ThreadModel
+    system_info: Resp_SystemInfo
 
 
 class _ThreadsCreatecontestBodyRequired(TypedDict):
@@ -556,8 +556,8 @@ class ThreadsCreatecontestBody(_ThreadsCreatecontestBodyRequired, total=False):
 
 
 class ThreadsCreatecontestResponse(TypedDict):
-    thread: dict[str, object]
-    system_info: dict[str, object]
+    thread: Resp_ThreadModel
+    system_info: Resp_SystemInfo
 
 
 class _ThreadsClaimBodyRequired(TypedDict):
@@ -589,8 +589,8 @@ class ThreadsClaimBody(_ThreadsClaimBodyRequired, total=False):
 
 
 class ThreadsClaimResponse(TypedDict):
-    thread: dict[str, object]
-    system_info: dict[str, object]
+    thread: Resp_ThreadModel
+    system_info: Resp_SystemInfo
 
 
 class ThreadsGetParams(TypedDict, total=False):
@@ -598,8 +598,8 @@ class ThreadsGetParams(TypedDict, total=False):
 
 
 class ThreadsGetResponse(TypedDict):
-    thread: dict[str, object]
-    system_info: dict[str, object]
+    thread: Resp_ThreadModel
+    system_info: Resp_SystemInfo
 
 
 class ThreadsEditBody(TypedDict, total=False):
@@ -615,8 +615,8 @@ class ThreadsEditBody(TypedDict, total=False):
 
 
 class ThreadsEditResponse(TypedDict):
-    thread: dict[str, object]
-    system_info: dict[str, object]
+    thread: Resp_ThreadModel
+    system_info: Resp_SystemInfo
 
 
 class ThreadsDeleteBody(TypedDict, total=False):
@@ -626,7 +626,7 @@ class ThreadsDeleteBody(TypedDict, total=False):
 class ThreadsDeleteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _ThreadsMoveBodyRequired(TypedDict):
@@ -644,36 +644,36 @@ class ThreadsMoveBody(_ThreadsMoveBodyRequired, total=False):
 class ThreadsMoveResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsBumpResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsHideResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsStarResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsUnstarResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsFollowersResponse(TypedDict):
     users: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsFollowBody(TypedDict, total=False):
@@ -683,13 +683,13 @@ class ThreadsFollowBody(TypedDict, total=False):
 class ThreadsFollowResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsUnfollowResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsFollowedParams(TypedDict, total=False):
@@ -700,18 +700,18 @@ class ThreadsFollowedParams(TypedDict, total=False):
 class ThreadsFollowedResponse(TypedDict):
     threads: list[dict[str, object]]
     threads_total: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsNavigationResponse(TypedDict):
     elements: list[dict[str, object]]
     elements_count: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsPollGetResponse(TypedDict):
     poll: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsPollVoteBody(TypedDict, total=False):
@@ -722,7 +722,7 @@ class ThreadsPollVoteBody(TypedDict, total=False):
 class ThreadsPollVoteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsUnreadParams(TypedDict, total=False):
@@ -732,9 +732,9 @@ class ThreadsUnreadParams(TypedDict, total=False):
 
 
 class ThreadsUnreadResponse(TypedDict):
-    threads: list[dict[str, object]]
+    threads: list[Resp_ThreadModel]
     data: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsRecentParams(TypedDict, total=False):
@@ -745,15 +745,15 @@ class ThreadsRecentParams(TypedDict, total=False):
 
 
 class ThreadsRecentResponse(TypedDict):
-    threads: list[dict[str, object]]
+    threads: list[Resp_ThreadModel]
     data: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ThreadsFinishResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── PostsApi Types ────────────────────────────────────────
@@ -768,10 +768,10 @@ class PostsListParams(TypedDict, total=False):
 
 
 class PostsListResponse(TypedDict):
-    posts: list[dict[str, object]]
-    thread: dict[str, object]
+    posts: list[Resp_ThreadModel]
+    thread: Resp_ThreadModel
     posts_total: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _PostsCreateBodyRequired(TypedDict):
@@ -784,13 +784,13 @@ class PostsCreateBody(_PostsCreateBodyRequired, total=False):
 
 
 class PostsCreateResponse(TypedDict):
-    post: dict[str, object]
-    system_info: dict[str, object]
+    post: Resp_PostModel
+    system_info: Resp_SystemInfo
 
 
 class PostsGetResponse(TypedDict):
-    post: dict[str, object]
-    system_info: dict[str, object]
+    post: Resp_PostModel
+    system_info: Resp_SystemInfo
 
 
 class PostsEditBody(TypedDict, total=False):
@@ -798,8 +798,8 @@ class PostsEditBody(TypedDict, total=False):
 
 
 class PostsEditResponse(TypedDict):
-    post: dict[str, object]
-    system_info: dict[str, object]
+    post: Resp_PostModel
+    system_info: Resp_SystemInfo
 
 
 class PostsDeleteBody(TypedDict, total=False):
@@ -809,7 +809,7 @@ class PostsDeleteBody(TypedDict, total=False):
 class PostsDeleteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PostsLikesParams(TypedDict, total=False):
@@ -819,24 +819,24 @@ class PostsLikesParams(TypedDict, total=False):
 
 class PostsLikesResponse(TypedDict):
     users: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PostsLikeResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PostsUnlikeResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PostsReportreasonsResponse(TypedDict):
     reasons: list[str]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PostsReportBody(TypedDict):
@@ -846,7 +846,7 @@ class PostsReportBody(TypedDict):
 class PostsReportResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _PostsCommentsGetParamsRequired(TypedDict):
@@ -859,8 +859,8 @@ class PostsCommentsGetParams(_PostsCommentsGetParamsRequired, total=False):
 
 
 class PostsCommentsGetResponse(TypedDict):
-    comments: list[dict[str, object]]
-    system_info: dict[str, object]
+    comments: list[Resp_PostCommentModel]
+    system_info: Resp_SystemInfo
 
 
 class PostsCommentsCreateBody(TypedDict):
@@ -870,7 +870,7 @@ class PostsCommentsCreateBody(TypedDict):
 
 class PostsCommentsCreateResponse(TypedDict):
     comment: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PostsCommentsEditBody(TypedDict):
@@ -880,7 +880,7 @@ class PostsCommentsEditBody(TypedDict):
 
 class PostsCommentsEditResponse(TypedDict):
     comment: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _PostsCommentsDeleteBodyRequired(TypedDict):
@@ -894,7 +894,7 @@ class PostsCommentsDeleteBody(_PostsCommentsDeleteBodyRequired, total=False):
 class PostsCommentsDeleteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PostsCommentsReportBody(TypedDict):
@@ -905,7 +905,7 @@ class PostsCommentsReportBody(TypedDict):
 class PostsCommentsReportResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── UsersApi Types ────────────────────────────────────────
@@ -918,15 +918,15 @@ class UsersListParams(TypedDict, total=False):
 
 
 class UsersListResponse(TypedDict):
-    users: list[dict[str, object]]
+    users: list[Resp_UserModel]
     users_total: int
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersFieldsResponse(TypedDict):
     fields: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersFindParams(TypedDict, total=False):
@@ -936,8 +936,8 @@ class UsersFindParams(TypedDict, total=False):
 
 
 class UsersFindResponse(TypedDict):
-    users: list[dict[str, object]]
-    system_info: dict[str, object]
+    users: list[Resp_UserModel]
+    system_info: Resp_SystemInfo
 
 
 class UsersGetParams(TypedDict, total=False):
@@ -945,8 +945,8 @@ class UsersGetParams(TypedDict, total=False):
 
 
 class UsersGetResponse(TypedDict):
-    user: dict[str, object]
-    system_info: dict[str, object]
+    user: Resp_UserModel
+    system_info: Resp_SystemInfo
 
 
 class UsersEditBody(TypedDict, total=False):
@@ -982,7 +982,7 @@ class UsersEditBody(TypedDict, total=False):
 class UsersEditResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersClaimsParams(TypedDict, total=False):
@@ -993,7 +993,7 @@ class UsersClaimsParams(TypedDict, total=False):
 class UsersClaimsResponse(TypedDict):
     claims: list[dict[str, object]]
     stats: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _UsersAvatarUploadBodyRequired(TypedDict):
@@ -1009,13 +1009,13 @@ class UsersAvatarUploadBody(_UsersAvatarUploadBodyRequired, total=False):
 class UsersAvatarUploadResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersAvatarDeleteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersAvatarCropBody(TypedDict, total=False):
@@ -1027,7 +1027,7 @@ class UsersAvatarCropBody(TypedDict, total=False):
 class UsersAvatarCropResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _UsersBackgroundUploadBodyRequired(TypedDict):
@@ -1043,13 +1043,13 @@ class UsersBackgroundUploadBody(_UsersBackgroundUploadBodyRequired, total=False)
 class UsersBackgroundUploadResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersBackgroundDeleteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersBackgroundCropBody(TypedDict, total=False):
@@ -1061,7 +1061,7 @@ class UsersBackgroundCropBody(TypedDict, total=False):
 class UsersBackgroundCropResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersFollowersParams(TypedDict, total=False):
@@ -1074,19 +1074,19 @@ class UsersFollowersResponse(TypedDict):
     users: list[dict[str, object]]
     users_total: int
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersFollowResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersUnfollowResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersFollowingsParams(TypedDict, total=False):
@@ -1098,7 +1098,7 @@ class UsersFollowingsParams(TypedDict, total=False):
 class UsersFollowingsResponse(TypedDict):
     users: list[dict[str, object]]
     users_total: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersLikesParams(TypedDict, total=False):
@@ -1117,7 +1117,7 @@ class UsersLikesResponse(TypedDict):
     contentType: str
     totalLikes: int
     likes: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersIgnoredParams(TypedDict, total=False):
@@ -1126,13 +1126,13 @@ class UsersIgnoredParams(TypedDict, total=False):
 
 class UsersIgnoredResponse(TypedDict):
     users: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersIgnoreResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersIgnoreeditParams(TypedDict, total=False):
@@ -1144,13 +1144,13 @@ class UsersIgnoreeditParams(TypedDict, total=False):
 class UsersIgnoreeditResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersUnignoreResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersContentsParams(TypedDict, total=False):
@@ -1161,31 +1161,31 @@ class UsersContentsParams(TypedDict, total=False):
 class UsersContentsResponse(TypedDict):
     data: list[dict[str, object]]
     data_total: int
-    user: dict[str, object]
+    user: Resp_UserModel
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersTrophiesResponse(TypedDict):
     trophies: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersSecretanswertypesResponse(TypedDict):
     data: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersSaResetResponse(TypedDict):
     success: bool
     waiting_time: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class UsersSaCancelresetResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── ProfilePostsApi Types ────────────────────────────────────────
@@ -1199,16 +1199,16 @@ class ProfilePostsListParams(TypedDict, total=False):
 
 
 class ProfilePostsListResponse(TypedDict):
-    profile_posts: list[dict[str, object]]
+    profile_posts: list[Resp_ProfilePostModel]
     totalProfilePosts: int
     canPostOnProfile: bool
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsGetResponse(TypedDict):
-    profile_post: dict[str, object]
-    system_info: dict[str, object]
+    profile_post: Resp_ProfilePostModel
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsEditBody(TypedDict, total=False):
@@ -1218,7 +1218,7 @@ class ProfilePostsEditBody(TypedDict, total=False):
 
 class ProfilePostsEditResponse(TypedDict):
     profile_post: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsDeleteParams(TypedDict, total=False):
@@ -1228,12 +1228,12 @@ class ProfilePostsDeleteParams(TypedDict, total=False):
 class ProfilePostsDeleteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsReportreasonsResponse(TypedDict):
     reasons: list[str]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsReportBody(TypedDict):
@@ -1243,46 +1243,46 @@ class ProfilePostsReportBody(TypedDict):
 class ProfilePostsReportResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsCreateBody(TypedDict):
-    user_id: str | int
+    user_id: UserIDModel
     post_body: str
 
 
 class ProfilePostsCreateResponse(TypedDict):
     profile_post: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsStickResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsUnstickResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsLikesResponse(TypedDict):
     users: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsLikeResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsUnlikeResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _ProfilePostsCommentsListParamsRequired(TypedDict):
@@ -1295,11 +1295,11 @@ class ProfilePostsCommentsListParams(_ProfilePostsCommentsListParamsRequired, to
 
 
 class ProfilePostsCommentsListResponse(TypedDict):
-    comments: list[dict[str, object]]
+    comments: list[Resp_ProfilePostCommentModel]
     comments_total: int
     profile_post: dict[str, object]
-    timeline_user: dict[str, object]
-    system_info: dict[str, object]
+    timeline_user: Resp_UserModel
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsCommentsCreateBody(TypedDict):
@@ -1309,7 +1309,7 @@ class ProfilePostsCommentsCreateBody(TypedDict):
 
 class ProfilePostsCommentsCreateResponse(TypedDict):
     comment: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsCommentsEditBody(TypedDict):
@@ -1319,7 +1319,7 @@ class ProfilePostsCommentsEditBody(TypedDict):
 
 class ProfilePostsCommentsEditResponse(TypedDict):
     comment: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsCommentsDeleteBody(TypedDict):
@@ -1329,12 +1329,12 @@ class ProfilePostsCommentsDeleteBody(TypedDict):
 class ProfilePostsCommentsDeleteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsCommentsGetResponse(TypedDict):
-    comment: dict[str, object]
-    system_info: dict[str, object]
+    comment: Resp_ProfilePostCommentModel
+    system_info: Resp_SystemInfo
 
 
 class ProfilePostsCommentsReportBody(TypedDict):
@@ -1344,7 +1344,7 @@ class ProfilePostsCommentsReportBody(TypedDict):
 class ProfilePostsCommentsReportResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── ConversationsApi Types ────────────────────────────────────────
@@ -1359,11 +1359,11 @@ class ConversationsListParams(TypedDict, total=False):
 
 
 class ConversationsListResponse(TypedDict):
-    conversations: list[dict[str, object]]
+    conversations: list[Resp_ConversationModel]
     can_start: bool
     folders: list[dict[str, object]]
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsCreateBody(TypedDict, total=False):
@@ -1379,8 +1379,8 @@ class ConversationsCreateBody(TypedDict, total=False):
 
 
 class ConversationsCreateResponse(TypedDict):
-    conversation: dict[str, object]
-    system_info: dict[str, object]
+    conversation: Resp_ConversationModel
+    system_info: Resp_SystemInfo
 
 
 class _ConversationsUpdateBodyRequired(TypedDict):
@@ -1397,8 +1397,8 @@ class ConversationsUpdateBody(_ConversationsUpdateBodyRequired, total=False):
 
 
 class ConversationsUpdateResponse(TypedDict):
-    conversation: dict[str, object]
-    system_info: dict[str, object]
+    conversation: Resp_ConversationModel
+    system_info: Resp_SystemInfo
 
 
 class ConversationsDeleteBody(TypedDict):
@@ -1409,16 +1409,16 @@ class ConversationsDeleteBody(TypedDict):
 class ConversationsDeleteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsStartBody(TypedDict):
-    user_id: str | int
+    user_id: UserIDModel
 
 
 class ConversationsStartResponse(TypedDict):
-    conversation: dict[str, object]
-    system_info: dict[str, object]
+    conversation: Resp_ConversationModel
+    system_info: Resp_SystemInfo
 
 
 class ConversationsSaveBody(TypedDict):
@@ -1428,12 +1428,12 @@ class ConversationsSaveBody(TypedDict):
 class ConversationsSaveResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsGetResponse(TypedDict):
-    conversation: dict[str, object]
-    system_info: dict[str, object]
+    conversation: Resp_ConversationModel
+    system_info: Resp_SystemInfo
 
 
 class ConversationsMessagesListParams(TypedDict, total=False):
@@ -1445,10 +1445,10 @@ class ConversationsMessagesListParams(TypedDict, total=False):
 
 
 class ConversationsMessagesListResponse(TypedDict):
-    messages: list[dict[str, object]]
+    messages: list[Resp_ConversationMessageModel]
     messages_total: int
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _ConversationsMessagesCreateBodyRequired(TypedDict):
@@ -1460,8 +1460,8 @@ class ConversationsMessagesCreateBody(_ConversationsMessagesCreateBodyRequired, 
 
 
 class ConversationsMessagesCreateResponse(TypedDict):
-    message: dict[str, object]
-    system_info: dict[str, object]
+    message: Resp_ConversationMessageModel
+    system_info: Resp_SystemInfo
 
 
 class ConversationsSearchBody(TypedDict, total=False):
@@ -1471,14 +1471,14 @@ class ConversationsSearchBody(TypedDict, total=False):
 
 
 class ConversationsSearchResponse(TypedDict):
-    conversations: list[dict[str, object]]
+    conversations: list[Resp_ConversationModel]
     recipients: bool
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsMessagesGetResponse(TypedDict):
-    message: dict[str, object]
-    system_info: dict[str, object]
+    message: Resp_ConversationModel
+    system_info: Resp_SystemInfo
 
 
 class ConversationsMessagesEditBody(TypedDict):
@@ -1486,14 +1486,14 @@ class ConversationsMessagesEditBody(TypedDict):
 
 
 class ConversationsMessagesEditResponse(TypedDict):
-    message: dict[str, object]
-    system_info: dict[str, object]
+    message: Resp_ConversationModel
+    system_info: Resp_SystemInfo
 
 
 class ConversationsMessagesDeleteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsInviteBody(TypedDict):
@@ -1503,7 +1503,7 @@ class ConversationsInviteBody(TypedDict):
 class ConversationsInviteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsKickBody(TypedDict):
@@ -1513,55 +1513,55 @@ class ConversationsKickBody(TypedDict):
 class ConversationsKickResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsReadResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsReadallResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsMessagesStickResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsMessagesUnstickResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsStarResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsUnstarResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsAlertsEnableResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ConversationsAlertsDisableResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── NotificationsApi Types ────────────────────────────────────────
@@ -1574,16 +1574,16 @@ class NotificationsListParams(TypedDict, total=False):
 
 
 class NotificationsListResponse(TypedDict):
-    notifications: list[dict[str, object]]
+    notifications: list[Resp_NotificationModel]
     notifications_total: int
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class NotificationsGetResponse(TypedDict):
     notification_id: int
-    notification: dict[str, object]
-    system_info: dict[str, object]
+    notification: Resp_NotificationModel
+    system_info: Resp_SystemInfo
 
 
 class NotificationsReadBody(TypedDict, total=False):
@@ -1593,7 +1593,7 @@ class NotificationsReadBody(TypedDict, total=False):
 class NotificationsReadResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── TagsApi Types ────────────────────────────────────────
@@ -1601,7 +1601,7 @@ class NotificationsReadResponse(TypedDict, total=False):
 
 class TagsPopularResponse(TypedDict):
     tags: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class TagsListParams(TypedDict, total=False):
@@ -1613,7 +1613,7 @@ class TagsListResponse(TypedDict):
     tags: dict[str, object]
     tags_total: int
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class TagsGetParams(TypedDict, total=False):
@@ -1626,7 +1626,7 @@ class TagsGetResponse(TypedDict):
     tagged: list[dict[str, object]]
     tagged_total: int
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class TagsFindParams(TypedDict):
@@ -1636,7 +1636,7 @@ class TagsFindParams(TypedDict):
 class TagsFindResponse(TypedDict):
     tags: list[str]
     ids: list[int]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── SearchApi Types ────────────────────────────────────────
@@ -1646,7 +1646,7 @@ class SearchAllBody(TypedDict, total=False):
     q: str
     tag: str
     forum_id: int
-    user_id: str | int
+    user_id: UserIDModel
     page: int
     limit: int
 
@@ -1654,16 +1654,16 @@ class SearchAllBody(TypedDict, total=False):
 class SearchAllResponse(TypedDict):
     data: list[dict[str, object]]
     data_total: int
-    users: list[dict[str, object]]
+    users: list[Resp_UserModel]
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class SearchThreadsBody(TypedDict, total=False):
     q: str
     tag: str
     forum_id: int
-    user_id: str | int
+    user_id: UserIDModel
     page: int
     limit: int
     data_limit: int
@@ -1673,14 +1673,14 @@ class SearchThreadsResponse(TypedDict):
     data: list[dict[str, object]]
     data_total: int
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class SearchPostsBody(TypedDict, total=False):
     q: str
     tag: str
     forum_id: int
-    user_id: str | int
+    user_id: UserIDModel
     page: int
     limit: int
     data_limit: int
@@ -1690,7 +1690,7 @@ class SearchPostsResponse(TypedDict):
     data: list[dict[str, object]]
     data_total: int
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class SearchUsersBody(TypedDict, total=False):
@@ -1698,8 +1698,8 @@ class SearchUsersBody(TypedDict, total=False):
 
 
 class SearchUsersResponse(TypedDict):
-    users: list[dict[str, object]]
-    system_info: dict[str, object]
+    users: list[Resp_UserModel]
+    system_info: Resp_SystemInfo
 
 
 class SearchProfilepostsBody(TypedDict, total=False):
@@ -1713,7 +1713,7 @@ class SearchProfilepostsResponse(TypedDict):
     data: list[dict[str, object]]
     data_total: int
     links: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class SearchTaggedBody(TypedDict, total=False):
@@ -1727,7 +1727,7 @@ class SearchTaggedResponse(TypedDict):
     data: list[dict[str, object]]
     data_total: int
     search_tags: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class SearchResultsBody(TypedDict, total=False):
@@ -1739,7 +1739,7 @@ class SearchResultsResponse(TypedDict):
     data: list[dict[str, object]]
     data_total: int
     search_tags: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── BatchApi Types ────────────────────────────────────────
@@ -1756,7 +1756,7 @@ class BatchExecuteResponse(TypedDict):
 
 
 class ChatboxIndexParams(TypedDict, total=False):
-    room_id: Literal[1, 2, 3, 4, 13]
+    room_id: RoomIDModel
 
 
 class ChatboxIndexResponse(TypedDict):
@@ -1766,11 +1766,11 @@ class ChatboxIndexResponse(TypedDict):
     permissions: dict[str, object]
     commands: list[str]
     roomsOnline: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _ChatboxGetmessagesParamsRequired(TypedDict):
-    room_id: Literal[1, 2, 3, 4, 13]
+    room_id: RoomIDModel
 
 
 class ChatboxGetmessagesParams(_ChatboxGetmessagesParamsRequired, total=False):
@@ -1778,12 +1778,12 @@ class ChatboxGetmessagesParams(_ChatboxGetmessagesParamsRequired, total=False):
 
 
 class ChatboxGetmessagesResponse(TypedDict):
-    messages: list[dict[str, object]]
-    system_info: dict[str, object]
+    messages: list[Resp_ChatboxMessageModel]
+    system_info: Resp_SystemInfo
 
 
 class _ChatboxPostmessageBodyRequired(TypedDict):
-    room_id: Literal[1, 2, 3, 4, 13]
+    room_id: RoomIDModel
     message: str
 
 
@@ -1792,8 +1792,8 @@ class ChatboxPostmessageBody(_ChatboxPostmessageBodyRequired, total=False):
 
 
 class ChatboxPostmessageResponse(TypedDict):
-    message: dict[str, object]
-    system_info: dict[str, object]
+    message: Resp_ChatboxMessageModel
+    system_info: Resp_SystemInfo
 
 
 class ChatboxEditmessageBody(TypedDict):
@@ -1802,8 +1802,8 @@ class ChatboxEditmessageBody(TypedDict):
 
 
 class ChatboxEditmessageResponse(TypedDict):
-    message: dict[str, object]
-    system_info: dict[str, object]
+    message: Resp_ChatboxMessageModel
+    system_info: Resp_SystemInfo
 
 
 class ChatboxDeletemessageBody(TypedDict):
@@ -1813,16 +1813,16 @@ class ChatboxDeletemessageBody(TypedDict):
 class ChatboxDeletemessageResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ChatboxOnlineParams(TypedDict):
-    room_id: Literal[1, 2, 3, 4, 13]
+    room_id: RoomIDModel
 
 
 class ChatboxOnlineResponse(TypedDict):
     users: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ChatboxReportreasonsParams(TypedDict):
@@ -1831,7 +1831,7 @@ class ChatboxReportreasonsParams(TypedDict):
 
 class ChatboxReportreasonsResponse(TypedDict):
     reasons: list[str]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ChatboxReportBody(TypedDict):
@@ -1842,7 +1842,7 @@ class ChatboxReportBody(TypedDict):
 class ChatboxReportResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ChatboxGetleaderboardParams(TypedDict, total=False):
@@ -1851,32 +1851,32 @@ class ChatboxGetleaderboardParams(TypedDict, total=False):
 
 class ChatboxGetleaderboardResponse(TypedDict):
     leaderboard: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ChatboxGetignoreResponse(TypedDict):
     ignored: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ChatboxPostignoreBody(TypedDict):
-    user_id: str | int
+    user_id: UserIDModel
 
 
 class ChatboxPostignoreResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ChatboxDeleteignoreBody(TypedDict):
-    user_id: str | int
+    user_id: UserIDModel
 
 
 class ChatboxDeleteignoreResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── FormsApi Types ────────────────────────────────────────
@@ -1891,7 +1891,7 @@ class FormsListResponse(TypedDict):
     formsPerPage: int
     page: int
     totalForms: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class FormsCreateBody(TypedDict):
@@ -1902,4 +1902,4 @@ class FormsCreateBody(TypedDict):
 class FormsCreateResponse(TypedDict):
     message: str
     content: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo

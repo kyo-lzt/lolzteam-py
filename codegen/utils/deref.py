@@ -37,6 +37,9 @@ def deref(value: object, spec: Spec, visited: set[str] | None = None) -> object:
         assert isinstance(value, dict)
         ref = value["$ref"]
         assert isinstance(ref, str)
+        # Preserve component schema refs — they map to named types
+        if ref.startswith("#/components/schemas/"):
+            return value
         if ref in seen:
             return {}
         seen.add(ref)

@@ -145,7 +145,7 @@ class ExtraModel(TypedDict, total=False):
 
 
 class ConfirmationCodeModel(TypedDict):
-    item: dict[str, object]
+    item: ItemModel
     codeData: dict[str, object]
 
 
@@ -159,15 +159,15 @@ YesNoNoMatterScheme = Literal["yes", "no", "nomatter"]
 
 
 class ItemListModel(TypedDict):
-    items: list[dict[str, object]]
+    items: list[ItemFromListModel]
     totalItems: int
     totalItemsPrice: object
     hasNextPage: bool
     perPage: int
     page: int
     searchUrl: str
-    stickyItems: list[dict[str, object]]
-    system_info: dict[str, object]
+    stickyItems: list[ItemFromListModel]
+    system_info: Resp_SystemInfo
 
 
 class ItemFromListModel(TypedDict, total=False):
@@ -426,15 +426,15 @@ CategoryAllParams = TypedDict(
 
 
 class CategoryAllResponse(TypedDict):
-    items: list[dict[str, object]]
+    items: list[ItemFromListModel]
     totalItems: int
     totalItemsPrice: object
     hasNextPage: bool
     perPage: int
     page: int
     searchUrl: str
-    stickyItems: list[dict[str, object]]
-    system_info: dict[str, object]
+    stickyItems: list[ItemFromListModel]
+    system_info: Resp_SystemInfo
 
 
 CategorySteamParams = TypedDict(
@@ -513,11 +513,11 @@ CategorySteamParams = TypedDict(
         "vac[]": list[int],
         "vac_skip_game_check": bool,
         "rt": Literal["yes", "no", "nomatter"],
-        "trade_ban": Literal["yes", "no", "nomatter"],
-        "trade_limit": Literal["yes", "no", "nomatter"],
+        "trade_ban": YesNoNoMatterScheme,
+        "trade_limit": YesNoNoMatterScheme,
         "daybreak": int,
-        "limit": Literal["yes", "no", "nomatter"],
-        "mafile": Literal["yes", "no", "nomatter"],
+        "limit": YesNoNoMatterScheme,
+        "mafile": YesNoNoMatterScheme,
         "reg": int,
         "reg_period": Literal["day", "month", "year"],
         "lmin": int,
@@ -527,7 +527,7 @@ CategorySteamParams = TypedDict(
         "wingman_rmin": int,
         "wingman_rmax": int,
         "no_vac": bool,
-        "mm_ban": Literal["yes", "no", "nomatter"],
+        "mm_ban": YesNoNoMatterScheme,
         "balance_min": int,
         "balance_max": int,
         "inv_game": int,
@@ -569,7 +569,7 @@ CategorySteamParams = TypedDict(
         "last_trans_date": int,
         "last_trans_date_period": Literal["day", "month", "year"],
         "last_trans_date_later": int,
-        "last_trans_date_period_later": Literal["day", "month", "year"],
+        "last_trans_date_period_later": DatePeriodModel,
         "no_trans": bool,
         "trans": bool,
         "gifts_purchase_min": int | float,
@@ -582,13 +582,13 @@ CategorySteamParams = TypedDict(
         "games_purchase_max": int | float,
         "purchase_min": int | float,
         "purchase_max": int | float,
-        "has_activated_keys": Literal["yes", "no", "nomatter"],
+        "has_activated_keys": YesNoNoMatterScheme,
         "elo_min": int,
         "elo_max": int,
         "cs2_map_rank": Literal[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
         "cs2_map_rmin": int,
         "cs2_map_rmax": int,
-        "has_faceit": Literal["yes", "no", "nomatter"],
+        "has_faceit": YesNoNoMatterScheme,
         "faceit_csgo_lvl_min": int,
         "faceit_csgo_lvl_max": int,
         "rust_deaths_min": int,
@@ -620,7 +620,7 @@ class CategorySteamResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryFortniteParams = TypedDict(
@@ -735,7 +735,7 @@ CategoryFortniteParams = TypedDict(
         "dances_shop_vbmax": int,
         "gliders_shop_vbmin": int,
         "gliders_shop_vbmax": int,
-        "bp": Literal["yes", "no", "nomatter"],
+        "bp": YesNoNoMatterScheme,
         "lmin": int,
         "lmax": int,
         "bp_lmin": int,
@@ -743,8 +743,8 @@ CategoryFortniteParams = TypedDict(
         "last_trans_date": int,
         "last_trans_date_period": Literal["day", "month", "year"],
         "no_trans": bool,
-        "xbox_linkable": Literal["yes", "no", "nomatter"],
-        "psn_linkable": Literal["yes", "no", "nomatter"],
+        "xbox_linkable": YesNoNoMatterScheme,
+        "psn_linkable": YesNoNoMatterScheme,
         "daybreak": int,
         "rl_purchases": bool,
         "reg": int,
@@ -777,7 +777,7 @@ class CategoryFortniteResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryMihoyoParams = TypedDict(
@@ -850,7 +850,7 @@ CategoryMihoyoParams = TypedDict(
         "parse_same_item_ids": bool,
         "item_domain": str,
         "email": Literal["yes", "no", "nomatter"],
-        "ea": Literal["yes", "no", "nomatter"],
+        "ea": YesNoNoMatterScheme,
         "region": list[Literal["asia", "cht", "eu", "usa"]],
         "not_region": list[Literal["asia", "cht", "eu", "usa"]],
         "genshin_character[]": list[int],
@@ -977,7 +977,7 @@ class CategoryMihoyoResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryRiotParams = TypedDict(
@@ -1157,7 +1157,7 @@ class CategoryRiotResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryTelegramParams = TypedDict(
@@ -1223,8 +1223,8 @@ CategoryTelegramParams = TypedDict(
             "other", "rambler", "outlook", "firstmail", "notletters", "mail_ru"
         ],
         "parse_same_item_ids": bool,
-        "spam": Literal["yes", "no", "nomatter"],
-        "password": Literal["yes", "no", "nomatter"],
+        "spam": YesNoNoMatterScheme,
+        "password": YesNoNoMatterScheme,
         "premium": Literal["yes", "no", "nomatter"],
         "premium_expiration": int,
         "premium_expiration_period": Literal["day", "month", "year"],
@@ -1287,7 +1287,7 @@ class CategoryTelegramResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategorySupercellParams = TypedDict(
@@ -1361,14 +1361,14 @@ CategorySupercellParams = TypedDict(
         "email_type[]": list[Literal["autoreg", "native", "no"]],
         "item_domain": str,
         "eg": Literal[-1, 0, 1, 2],
-        "tel": Literal["yes", "no", "nomatter"],
+        "tel": YesNoNoMatterScheme,
         "brawl_level_min": int,
         "brawl_level_max": int,
         "brawl_cup_min": int,
         "brawl_cup_max": int,
         "brawl_wins_min": int,
         "brawl_wins_max": int,
-        "brawl_pass": Literal["yes", "no", "nomatter"],
+        "brawl_pass": YesNoNoMatterScheme,
         "brawler[]": list[str],
         "brawlers_min": int,
         "brawlers_max": int,
@@ -1382,14 +1382,14 @@ CategorySupercellParams = TypedDict(
         "royale_wins_max": int,
         "king_level_min": int,
         "king_level_max": int,
-        "royale_pass": Literal["yes", "no", "nomatter"],
+        "royale_pass": YesNoNoMatterScheme,
         "clash_level_min": int,
         "clash_level_max": int,
         "clash_cup_min": int,
         "clash_cup_max": int,
         "clash_wins_min": int,
         "clash_wins_max": int,
-        "clash_pass": Literal["yes", "no", "nomatter"],
+        "clash_pass": YesNoNoMatterScheme,
         "total_heroes_level_min": int,
         "total_heroes_level_max": int,
         "total_troops_level_min": int,
@@ -1426,7 +1426,7 @@ class CategorySupercellResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryEaParams = TypedDict(
@@ -1507,16 +1507,16 @@ CategoryEaParams = TypedDict(
         "al_rank_max": int,
         "al_level_min": int,
         "al_level_max": int,
-        "has_ban": Literal["yes", "no", "nomatter"],
-        "xbox_connected": Literal["yes", "no", "nomatter"],
-        "steam_connected": Literal["yes", "no", "nomatter"],
-        "psn_connected": Literal["yes", "no", "nomatter"],
+        "has_ban": YesNoNoMatterScheme,
+        "xbox_connected": YesNoNoMatterScheme,
+        "steam_connected": YesNoNoMatterScheme,
+        "psn_connected": YesNoNoMatterScheme,
         "subscription": Literal["EA Play", "EA Play Pro"],
         "subscription_length": int,
         "subscription_period": Literal["day", "month", "year"],
         "hours_played": dict[str, int],
         "hours_played_max": dict[str, int],
-        "transactions": Literal["yes", "no", "nomatter"],
+        "transactions": YesNoNoMatterScheme,
     },
     total=False,
 )
@@ -1535,7 +1535,7 @@ class CategoryEaResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryWotParams = TypedDict(
@@ -1686,7 +1686,7 @@ class CategoryWotResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryWotblitzParams = TypedDict(
@@ -1837,7 +1837,7 @@ class CategoryWotblitzResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryGiftsParams = TypedDict(
@@ -1930,7 +1930,7 @@ class CategoryGiftsResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryEpicgamesParams = TypedDict(
@@ -2035,7 +2035,7 @@ class CategoryEpicgamesResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryEscapefromtarkovParams = TypedDict(
@@ -2121,7 +2121,7 @@ CategoryEscapefromtarkovParams = TypedDict(
         "reg_period": Literal["day", "month", "year"],
         "level_min": int,
         "level_max": int,
-        "pve": Literal["yes", "no", "nomatter"],
+        "pve": YesNoNoMatterScheme,
         "side": Literal["Bear", "Savage"],
     },
     total=False,
@@ -2141,7 +2141,7 @@ class CategoryEscapefromtarkovResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategorySocialclubParams = TypedDict(
@@ -2237,7 +2237,7 @@ class CategorySocialclubResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryUplayParams = TypedDict(
@@ -2324,17 +2324,17 @@ CategoryUplayParams = TypedDict(
         "r6_rank_max": int,
         "r6_operators_min": int,
         "r6_operators_max": int,
-        "r6_ban": Literal["yes", "no", "nomatter"],
+        "r6_ban": YesNoNoMatterScheme,
         "r6_smin": int,
         "r6_smax": int,
         "r6_skin[]": list[str],
         "r6_operator[]": list[str],
-        "xbox_connected": Literal["yes", "no", "nomatter"],
-        "psn_connected": Literal["yes", "no", "nomatter"],
-        "steam_connected": Literal["yes", "no", "nomatter"],
+        "xbox_connected": YesNoNoMatterScheme,
+        "psn_connected": YesNoNoMatterScheme,
+        "steam_connected": YesNoNoMatterScheme,
         "balance_min": int | float,
         "balance_max": int | float,
-        "transactions": Literal["yes", "no", "nomatter"],
+        "transactions": YesNoNoMatterScheme,
         "reg": int,
         "reg_period": Literal["day", "month", "year"],
     },
@@ -2355,7 +2355,7 @@ class CategoryUplayResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryDiscordParams = TypedDict(
@@ -2428,15 +2428,15 @@ CategoryDiscordParams = TypedDict(
         "email_type[]": list[Literal["autoreg", "native", "no"]],
         "item_domain": str,
         "tel": Literal["yes", "no", "nomatter"],
-        "nitro": Literal["yes", "no", "nomatter"],
+        "nitro": YesNoNoMatterScheme,
         "nitro_type[]": list[Literal["basic", "classic", "full", "none", "trial"]],
         "nitro_length": int,
         "nitro_period": Literal["day", "month", "year"],
         "boosts_min": int,
         "boosts_max": int,
-        "billing": Literal["yes", "no", "nomatter"],
-        "gifts": Literal["yes", "no", "nomatter"],
-        "transactions": Literal["yes", "no", "nomatter"],
+        "billing": YesNoNoMatterScheme,
+        "gifts": YesNoNoMatterScheme,
+        "transactions": YesNoNoMatterScheme,
         "badge[]": list[
             Literal[
                 "bug_hunter",
@@ -2460,7 +2460,7 @@ CategoryDiscordParams = TypedDict(
         "reg_period": Literal["day", "month", "year"],
         "language[]": list[str],
         "not_language[]": list[str],
-        "clans": Literal["yes", "no", "nomatter"],
+        "clans": YesNoNoMatterScheme,
         "min_admin_clans": int,
         "max_admin_clans": int,
         "min_owner_clans": int,
@@ -2469,7 +2469,7 @@ CategoryDiscordParams = TypedDict(
         "not_country[]": list[str],
         "min_servers": int,
         "max_servers": int,
-        "2fa": Literal["yes", "no", "nomatter"],
+        "2fa": YesNoNoMatterScheme,
         "min_full_credits": int,
         "max_full_credits": int,
         "min_basic_credits": int,
@@ -2494,7 +2494,7 @@ class CategoryDiscordResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryTiktokParams = TypedDict(
@@ -2577,7 +2577,7 @@ CategoryTiktokParams = TypedDict(
         "like_max": int,
         "coins_min": int,
         "coins_max": int,
-        "cookie_login": Literal["yes", "no", "nomatter"],
+        "cookie_login": YesNoNoMatterScheme,
         "verified": Literal["yes", "no", "nomatter"],
         "email": Literal["yes", "no", "nomatter"],
     },
@@ -2598,7 +2598,7 @@ class CategoryTiktokResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryInstagramParams = TypedDict(
@@ -2674,7 +2674,7 @@ CategoryInstagramParams = TypedDict(
         "country[]": list[str],
         "not_country[]": list[str],
         "cookies": Literal["yes", "no", "nomatter"],
-        "login_without_cookies": Literal["yes", "no", "nomatter"],
+        "login_without_cookies": YesNoNoMatterScheme,
         "followers_min": int,
         "followers_max": int,
         "post_min": int,
@@ -2699,7 +2699,7 @@ class CategoryInstagramResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryBattlenetParams = TypedDict(
@@ -2777,11 +2777,11 @@ CategoryBattlenetParams = TypedDict(
         "country[]": list[str],
         "not_country[]": list[str],
         "tel": Literal["yes", "no", "nomatter"],
-        "edit_btag": Literal["yes", "no", "nomatter"],
-        "changeable_fn": Literal["yes", "no", "nomatter"],
-        "real_id": Literal["yes", "no", "nomatter"],
-        "parent_control": Literal["yes", "no", "nomatter"],
-        "no_bans": Literal["yes", "no", "nomatter"],
+        "edit_btag": YesNoNoMatterScheme,
+        "changeable_fn": YesNoNoMatterScheme,
+        "real_id": YesNoNoMatterScheme,
+        "parent_control": YesNoNoMatterScheme,
+        "no_bans": YesNoNoMatterScheme,
         "balance_min": int,
         "balance_max": int,
     },
@@ -2802,7 +2802,7 @@ class CategoryBattlenetResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryChatgptParams = TypedDict(
@@ -2888,7 +2888,7 @@ CategoryChatgptParams = TypedDict(
         "subscription_period": Literal["day", "month", "year"],
         "autorenewal": Literal["yes", "no", "nomatter"],
         "tel": Literal["yes", "no", "nomatter"],
-        "transactions": Literal["yes", "no", "nomatter"],
+        "transactions": YesNoNoMatterScheme,
         "reg": int,
         "reg_period": Literal["day", "month", "year"],
         "openai_tier[]": list[Literal["tier1", "tier2", "tier3", "tier4", "tier5"]],
@@ -2912,7 +2912,7 @@ class CategoryChatgptResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryVpnParams = TypedDict(
@@ -3019,7 +3019,7 @@ class CategoryVpnResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryRobloxParams = TypedDict(
@@ -3089,7 +3089,7 @@ CategoryRobloxParams = TypedDict(
             "other", "rambler", "outlook", "firstmail", "notletters", "mail_ru"
         ],
         "parse_same_item_ids": bool,
-        "email": Literal["yes", "no", "nomatter"],
+        "email": YesNoNoMatterScheme,
         "robux_min": int,
         "robux_max": int,
         "friends_min": int,
@@ -3112,17 +3112,17 @@ CategoryRobloxParams = TypedDict(
         "subscription_length": int,
         "subscription_period": Literal["day", "month", "year"],
         "autorenewal": Literal["yes", "no", "nomatter"],
-        "xbox_connected": Literal["yes", "no", "nomatter"],
-        "psn_connected": Literal["yes", "no", "nomatter"],
+        "xbox_connected": YesNoNoMatterScheme,
+        "psn_connected": YesNoNoMatterScheme,
         "verified": Literal["yes", "no", "nomatter"],
-        "age_verified": Literal["yes", "no", "nomatter"],
+        "age_verified": YesNoNoMatterScheme,
         "incoming_robux_total_min": int,
         "incoming_robux_total_max": int,
         "limited_price_min": int,
         "limited_price_max": int,
         "gamepass_min": int,
         "gamepass_max": int,
-        "game_donations": Literal["yes", "no", "nomatter"],
+        "game_donations": YesNoNoMatterScheme,
         "inv_min": int,
         "inv_max": int,
         "ugc_limited_price_min": int,
@@ -3131,7 +3131,7 @@ CategoryRobloxParams = TypedDict(
         "credit_balance_max": int,
         "offsale_min": int,
         "offsale_max": int,
-        "voice": Literal["yes", "no", "nomatter"],
+        "voice": YesNoNoMatterScheme,
         "age_group[]": list[str],
         "not_age_group[]": list[str],
     },
@@ -3152,7 +3152,7 @@ class CategoryRobloxResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryWarfaceParams = TypedDict(
@@ -3250,7 +3250,7 @@ class CategoryWarfaceResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryMinecraftParams = TypedDict(
@@ -3324,18 +3324,18 @@ CategoryMinecraftParams = TypedDict(
         "subscription_length": int,
         "subscription_period": Literal["day", "month", "year"],
         "autorenewal": Literal["yes", "no", "nomatter"],
-        "java": Literal["yes", "no", "nomatter"],
-        "bedrock": Literal["yes", "no", "nomatter"],
-        "dungeons": Literal["yes", "no", "nomatter"],
-        "legends": Literal["yes", "no", "nomatter"],
-        "change_nickname": Literal["yes", "no", "nomatter"],
+        "java": YesNoNoMatterScheme,
+        "bedrock": YesNoNoMatterScheme,
+        "dungeons": YesNoNoMatterScheme,
+        "legends": YesNoNoMatterScheme,
+        "change_nickname": YesNoNoMatterScheme,
         "capes[]": list[str],
         "capes_min": int,
         "capes_max": int,
         "country[]": list[str],
         "not_country[]": list[str],
-        "hypixel_ban": Literal["yes", "no", "nomatter"],
-        "hypixel_skyblock_api_enabled": Literal["yes", "no", "nomatter"],
+        "hypixel_ban": YesNoNoMatterScheme,
+        "hypixel_skyblock_api_enabled": YesNoNoMatterScheme,
         "rank_hypixel[]": list[Literal["MVP", "MVP+", "MVP++", "VIP", "VIP+", "YOUTUBE"]],
         "level_hypixel_min": int,
         "level_hypixel_max": int,
@@ -3349,10 +3349,10 @@ CategoryMinecraftParams = TypedDict(
         "reg_period": Literal["day", "month", "year"],
         "last_login_hypixel": int,
         "last_login_hypixel_period": Literal["day", "month", "year"],
-        "can_change_details": Literal["yes", "no", "nomatter"],
+        "can_change_details": YesNoNoMatterScheme,
         "nickname_length_min": int,
         "nickname_length_max": int,
-        "hypixel_ban_parsed": Literal["yes", "no", "nomatter"],
+        "hypixel_ban_parsed": YesNoNoMatterScheme,
         "minecoins_min": int,
         "minecoins_max": int,
     },
@@ -3373,7 +3373,7 @@ class CategoryMinecraftResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 CategoryHytaleParams = TypedDict(
@@ -3464,7 +3464,7 @@ class CategoryHytaleResponse(TypedDict):
     serverTime: int
     searchUrl: str
     stickyItems: list[object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class CategoryListParams(TypedDict, total=False):
@@ -3473,19 +3473,19 @@ class CategoryListParams(TypedDict, total=False):
 
 class CategoryListResponse(TypedDict):
     category: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class CategoryParamsResponse(TypedDict, total=False):
     category: dict[str, object]
     params: list[dict[str, object]]
     base_params: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class CategoryGamesResponse(TypedDict, total=False):
     games: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── ListApi Types ────────────────────────────────────────
@@ -3495,9 +3495,7 @@ ListUserParams = TypedDict(
     "ListUserParams",
     {
         "user_id": int,
-        "category_id": Literal[
-            1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 28, 30, 31
-        ],
+        "category_id": CategoryIDModel,
         "page": int,
         "show": Literal[
             "active",
@@ -3574,24 +3572,22 @@ ListUserParams = TypedDict(
 
 
 class ListUserResponse(TypedDict):
-    items: list[dict[str, object]]
+    items: list[ItemFromListModel]
     totalItems: int
     totalItemsPrice: object
     hasNextPage: bool
     perPage: int
     page: int
     searchUrl: str
-    stickyItems: list[dict[str, object]]
-    system_info: dict[str, object]
+    stickyItems: list[ItemFromListModel]
+    system_info: Resp_SystemInfo
 
 
 ListOrdersParams = TypedDict(
     "ListOrdersParams",
     {
         "user_id": int,
-        "category_id": Literal[
-            1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 28, 30, 31
-        ],
+        "category_id": CategoryIDModel,
         "page": int,
         "show": Literal[
             "active",
@@ -3657,15 +3653,15 @@ ListOrdersParams = TypedDict(
 
 
 class ListOrdersResponse(TypedDict):
-    items: list[dict[str, object]]
+    items: list[ItemFromListModel]
     totalItems: int
     totalItemsPrice: object
     hasNextPage: bool
     perPage: int
     page: int
     searchUrl: str
-    stickyItems: list[dict[str, object]]
-    system_info: dict[str, object]
+    stickyItems: list[ItemFromListModel]
+    system_info: Resp_SystemInfo
 
 
 class ListStatesParams(TypedDict, total=False):
@@ -3674,7 +3670,7 @@ class ListStatesParams(TypedDict, total=False):
 
 class ListStatesResponse(TypedDict):
     userItemStates: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 ListDownloadParams = TypedDict(
@@ -3682,9 +3678,7 @@ ListDownloadParams = TypedDict(
     {
         "format": Literal["short", "custom", "mfa_file_steam_id", "mfa_file_login"],
         "custom_format": str,
-        "category_id": Literal[
-            1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 28, 30, 31
-        ],
+        "category_id": CategoryIDModel,
         "page": int,
         "show": Literal[
             "active",
@@ -3829,15 +3823,15 @@ ListFavoritesParams = TypedDict(
 
 
 class ListFavoritesResponse(TypedDict):
-    items: list[dict[str, object]]
+    items: list[ItemFromListModel]
     totalItems: int
     totalItemsPrice: object
     hasNextPage: bool
     perPage: int
     page: int
     searchUrl: str
-    stickyItems: list[dict[str, object]]
-    system_info: dict[str, object]
+    stickyItems: list[ItemFromListModel]
+    system_info: Resp_SystemInfo
 
 
 ListViewedParams = TypedDict(
@@ -3907,15 +3901,15 @@ ListViewedParams = TypedDict(
 
 
 class ListViewedResponse(TypedDict):
-    items: list[dict[str, object]]
+    items: list[ItemFromListModel]
     totalItems: int
     totalItemsPrice: object
     hasNextPage: bool
     perPage: int
     page: int
     searchUrl: str
-    stickyItems: list[dict[str, object]]
-    system_info: dict[str, object]
+    stickyItems: list[ItemFromListModel]
+    system_info: Resp_SystemInfo
 
 
 # ─── ManagingApi Types ────────────────────────────────────────
@@ -3926,7 +3920,7 @@ class ManagingGetParams(TypedDict, total=False):
 
 
 class ManagingGetResponse(TypedDict):
-    item: dict[str, object]
+    item: ItemModel
     canStickItem: bool
     canUnstickItem: bool
     canBuyItem: bool
@@ -3946,7 +3940,7 @@ class ManagingGetResponse(TypedDict):
     canChangeOwner: bool
     sameItemsIds: list[int]
     sameItemsCount: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingDeleteBody(TypedDict):
@@ -3956,11 +3950,11 @@ class ManagingDeleteBody(TypedDict):
 class ManagingDeleteResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingCreateclaimBody(TypedDict):
-    item_id: int
+    item_id: ItemIDModel
     post_body: str
 
 
@@ -3970,19 +3964,19 @@ class ManagingCreateclaimResponse(TypedDict):
 
 
 class ManagingBulkgetBody(TypedDict, total=False):
-    item_id: list[int]
+    item_id: list[ItemIDModel]
     parse_same_item_ids: bool
 
 
 class ManagingBulkgetResponse(TypedDict):
     items: list[dict[str, object]]
     left_item_id: list[int]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingSteaminventoryvalueParams(TypedDict, total=False):
     app_id: Literal[730, 578080, 753, 570, 440, 252490, 304930, 232090, 322330]
-    currency: Literal["rub", "uah", "kzt", "byn", "usd", "eur", "gbp", "cny", "try", "jpy", "brl"]
+    currency: CurrencyModel
     ignore_cache: bool
 
 
@@ -3990,7 +3984,7 @@ class ManagingSteaminventoryvalueResponse(TypedDict, total=False):
     query: str
     data: dict[str, object]
     appId: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _ManagingSteamvalueParamsRequired(TypedDict):
@@ -3999,7 +3993,7 @@ class _ManagingSteamvalueParamsRequired(TypedDict):
 
 class ManagingSteamvalueParams(_ManagingSteamvalueParamsRequired, total=False):
     app_id: Literal[730, 578080, 753, 570, 440, 252490, 304930, 232090, 322330]
-    currency: Literal["rub", "uah", "kzt", "byn", "usd", "eur", "gbp", "cny", "try", "jpy", "brl"]
+    currency: CurrencyModel
     ignore_cache: bool
 
 
@@ -4007,7 +4001,7 @@ class ManagingSteamvalueResponse(TypedDict, total=False):
     query: str
     data: dict[str, object]
     appId: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingSteampreviewParams(TypedDict, total=False):
@@ -4021,7 +4015,7 @@ class ManagingEditBody(TypedDict, total=False):
     title: str
     title_en: str
     price: int
-    currency: Literal["rub", "uah", "kzt", "byn", "usd", "eur", "gbp", "cny", "try", "jpy", "brl"]
+    currency: CurrencyModel
     item_origin: Literal["brute", "phishing", "stealer", "personal", "resale", "autoreg", "dummy"]
     email_login_data: str
     email_type: Literal["native", "autoreg"]
@@ -4034,17 +4028,17 @@ class ManagingEditBody(TypedDict, total=False):
 class ManagingEditResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingAipriceResponse(TypedDict):
     price: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingAutobuypriceResponse(TypedDict):
     price: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingNoteBody(TypedDict, total=False):
@@ -4054,7 +4048,7 @@ class ManagingNoteBody(TypedDict, total=False):
 class ManagingNoteResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingSteamupdatevalueBody(TypedDict, total=False):
@@ -4065,14 +4059,14 @@ class ManagingSteamupdatevalueBody(TypedDict, total=False):
 
 class ManagingSteamupdatevalueResponse(TypedDict):
     status: str
-    item: dict[str, object]
-    system_info: dict[str, object]
+    item: ItemModel
+    system_info: Resp_SystemInfo
 
 
 class ManagingBumpResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingAutobumpBody(TypedDict):
@@ -4082,25 +4076,25 @@ class ManagingAutobumpBody(TypedDict):
 class ManagingAutobumpResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingAutobumpdisableResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingOpenResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingCloseResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingImageParams(TypedDict):
@@ -4109,11 +4103,11 @@ class ManagingImageParams(TypedDict):
 
 class ManagingImageResponse(TypedDict):
     base64: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingEmailcodeResponse(TypedDict):
-    item: dict[str, object]
+    item: ItemModel
     codeData: dict[str, object]
 
 
@@ -4127,30 +4121,30 @@ class ManagingGetletters2Params(TypedDict, total=False):
 class ManagingGetletters2Response(TypedDict):
     email: str
     letters: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingSteamGetmafileResponse(TypedDict):
     maFile: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingSteamAddmafileResponse(TypedDict):
     status: str
     message: str
-    item: dict[str, object]
-    system_info: dict[str, object]
+    item: ItemModel
+    system_info: Resp_SystemInfo
 
 
 class ManagingSteamRemovemafileResponse(TypedDict):
     status: str
     message: str
-    item: dict[str, object]
-    system_info: dict[str, object]
+    item: ItemModel
+    system_info: Resp_SystemInfo
 
 
 class ManagingSteammafilecodeResponse(TypedDict):
-    item: dict[str, object]
+    item: ItemModel
     codeData: dict[str, object]
 
 
@@ -4162,24 +4156,24 @@ class ManagingSteamsdaBody(TypedDict, total=False):
 class ManagingSteamsdaResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingTelegramcodeResponse(TypedDict):
-    item: dict[str, object]
+    item: ItemModel
     codes: dict[str, object]
 
 
 class ManagingTelegramresetauthResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingRefuseguaranteeResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingDeclinevideorecordingBody(TypedDict):
@@ -4189,12 +4183,12 @@ class ManagingDeclinevideorecordingBody(TypedDict):
 class ManagingDeclinevideorecordingResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingCheckguaranteeResponse(TypedDict):
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingChangepasswordBody(TypedDict, total=False):
@@ -4223,7 +4217,7 @@ class ManagingTagResponse(TypedDict):
     tag: dict[str, object]
     addedTagId: int
     deleteTags: list[int]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingUntagBody(TypedDict):
@@ -4235,7 +4229,7 @@ class ManagingUntagResponse(TypedDict):
     tag: dict[str, object]
     addedTagId: int
     deleteTags: list[int]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingPublictagBody(TypedDict):
@@ -4247,7 +4241,7 @@ class ManagingPublictagResponse(TypedDict):
     tag: dict[str, object]
     addedTagId: int
     deleteTags: list[int]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingPublicuntagBody(TypedDict):
@@ -4259,31 +4253,31 @@ class ManagingPublicuntagResponse(TypedDict):
     tag: dict[str, object]
     addedTagId: int
     deleteTags: list[int]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingFavoriteResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingUnfavoriteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingStickResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingUnstickResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ManagingTransferBody(TypedDict):
@@ -4294,7 +4288,7 @@ class ManagingTransferBody(TypedDict):
 class ManagingTransferResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── ProfileApi Types ────────────────────────────────────────
@@ -4308,7 +4302,7 @@ class ProfileClaimsParams(TypedDict, total=False):
 class ProfileClaimsResponse(TypedDict):
     claims: list[dict[str, object]]
     stats: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProfileGetParams(TypedDict, total=False):
@@ -4316,8 +4310,8 @@ class ProfileGetParams(TypedDict, total=False):
 
 
 class ProfileGetResponse(TypedDict):
-    user: dict[str, object]
-    system_info: dict[str, object]
+    user: UserModel
+    system_info: Resp_SystemInfo
 
 
 class ProfileEditBody(TypedDict, total=False):
@@ -4338,7 +4332,7 @@ class ProfileEditBody(TypedDict, total=False):
 class ProfileEditResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── CartApi Types ────────────────────────────────────────
@@ -4347,9 +4341,7 @@ class ProfileEditResponse(TypedDict, total=False):
 CartGetParams = TypedDict(
     "CartGetParams",
     {
-        "category_id": Literal[
-            1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 28, 30, 31
-        ],
+        "category_id": CategoryIDModel,
         "page": int,
         "pmin": int,
         "pmax": int,
@@ -4420,33 +4412,33 @@ CartGetParams = TypedDict(
 
 
 class CartGetResponse(TypedDict):
-    items: list[dict[str, object]]
+    items: list[ItemFromListModel]
     totalItems: int
     totalItemsPrice: object
     hasNextPage: bool
     perPage: int
     page: int
     searchUrl: str
-    stickyItems: list[dict[str, object]]
-    system_info: dict[str, object]
+    stickyItems: list[ItemFromListModel]
+    system_info: Resp_SystemInfo
 
 
 class CartAddBody(TypedDict):
-    item_id: int
+    item_id: ItemIDModel
 
 
 class CartAddResponse(TypedDict):
     success: bool
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class CartDeleteBody(TypedDict, total=False):
-    item_id: int
+    item_id: ItemIDModel
 
 
 class CartDeleteResponse(TypedDict):
     success: bool
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── PurchasingApi Types ────────────────────────────────────────
@@ -4460,14 +4452,14 @@ class PurchasingFastbuyBody(TypedDict, total=False):
 class PurchasingFastbuyResponse(TypedDict):
     status: str
     item: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PurchasingCheckResponse(TypedDict):
     status: str
     item: dict[str, object]
     requireVideoRecording: bool
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PurchasingConfirmBody(TypedDict, total=False):
@@ -4477,7 +4469,7 @@ class PurchasingConfirmBody(TypedDict, total=False):
 
 class _PurchasingConfirmResponseRequired(TypedDict):
     item: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PurchasingConfirmResponse(_PurchasingConfirmResponseRequired, total=False):
@@ -4495,42 +4487,40 @@ class PurchasingDiscountrequestBody(_PurchasingDiscountrequestBodyRequired, tota
 class PurchasingDiscountrequestResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PurchasingDiscountcancelResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── CustomDiscountsApi Types ────────────────────────────────────────
 
 
 class CustomDiscountsGetResponse(TypedDict):
-    discounts: list[dict[str, object]]
+    discounts: list[DiscountModel]
     total: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _CustomDiscountsCreateBodyRequired(TypedDict):
     user_id: int
-    category_id: Literal[
-        1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 28, 30, 31
-    ]
+    category_id: CategoryIDModel
     discount_percent: int | float
     min_price: int | float
 
 
 class CustomDiscountsCreateBody(_CustomDiscountsCreateBodyRequired, total=False):
     max_price: int | float
-    currency: Literal["rub", "uah", "kzt", "byn", "usd", "eur", "gbp", "cny", "try", "jpy", "brl"]
+    currency: CurrencyModel
 
 
 class CustomDiscountsCreateResponse(TypedDict):
-    discount: dict[str, object]
+    discount: DiscountModel
     total: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _CustomDiscountsEditBodyRequired(TypedDict):
@@ -4544,9 +4534,9 @@ class CustomDiscountsEditBody(_CustomDiscountsEditBodyRequired, total=False):
 
 
 class CustomDiscountsEditResponse(TypedDict):
-    discounts: list[dict[str, object]]
+    discounts: list[DiscountModel]
     total: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class CustomDiscountsDeleteBody(TypedDict):
@@ -4556,7 +4546,7 @@ class CustomDiscountsDeleteBody(TypedDict):
 class CustomDiscountsDeleteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── PublishingApi Types ────────────────────────────────────────
@@ -4567,7 +4557,7 @@ class _PublishingFastsellBodyRequired(TypedDict):
     category_id: Literal[
         1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 28, 30, 31
     ]
-    currency: Literal["rub", "uah", "kzt", "byn", "usd", "eur", "gbp", "cny", "try", "jpy", "brl"]
+    currency: CurrencyModel
     item_origin: Literal[
         "brute",
         "phishing",
@@ -4595,13 +4585,13 @@ class PublishingFastsellBody(_PublishingFastsellBodyRequired, total=False):
     has_email_login_data: bool
     email_login_data: str
     email_type: Literal["native", "autoreg"]
-    extra: dict[str, object]
+    extra: ExtraModel
 
 
 class PublishingFastsellResponse(TypedDict):
-    item: dict[str, object]
+    item: ItemModel
     itemLink: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _PublishingAddBodyRequired(TypedDict):
@@ -4609,7 +4599,7 @@ class _PublishingAddBodyRequired(TypedDict):
     category_id: Literal[
         1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 28, 30, 31
     ]
-    currency: Literal["rub", "uah", "kzt", "byn", "usd", "eur", "gbp", "cny", "try", "jpy", "brl"]
+    currency: CurrencyModel
     item_origin: Literal[
         "brute",
         "phishing",
@@ -4640,8 +4630,8 @@ class PublishingAddBody(_PublishingAddBodyRequired, total=False):
 
 class PublishingAddResponse(TypedDict):
     status: str
-    item: dict[str, object]
-    system_info: dict[str, object]
+    item: ItemModel
+    system_info: Resp_SystemInfo
 
 
 class PublishingCheckBody(TypedDict, total=False):
@@ -4653,13 +4643,13 @@ class PublishingCheckBody(TypedDict, total=False):
     has_email_login_data: bool
     email_login_data: str
     email_type: Literal["native", "autoreg"]
-    extra: dict[str, object]
+    extra: ExtraModel
 
 
 class PublishingCheckResponse(TypedDict):
     status: str
     item: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _PublishingExternalBodyRequired(TypedDict):
@@ -4675,7 +4665,7 @@ class PublishingExternalBody(_PublishingExternalBodyRequired, total=False):
 class PublishingExternalResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── PaymentsApi Types ────────────────────────────────────────
@@ -4687,12 +4677,12 @@ class PaymentsInvoiceGetParams(TypedDict, total=False):
 
 
 class PaymentsInvoiceGetResponse(TypedDict):
-    invoice: dict[str, object]
-    system_info: dict[str, object]
+    invoice: InvoiceModel
+    system_info: Resp_SystemInfo
 
 
 class _PaymentsInvoiceCreateBodyRequired(TypedDict):
-    currency: Literal["rub", "uah", "kzt", "byn", "usd", "eur", "gbp", "cny", "try", "jpy", "brl"]
+    currency: CurrencyModel
     amount: int | float
     payment_id: str
     comment: str
@@ -4710,31 +4700,31 @@ class PaymentsInvoiceCreateBody(_PaymentsInvoiceCreateBodyRequired, total=False)
 
 
 class PaymentsInvoiceCreateResponse(TypedDict):
-    invoice: dict[str, object]
-    system_info: dict[str, object]
+    invoice: InvoiceModel
+    system_info: Resp_SystemInfo
 
 
 class PaymentsInvoiceListParams(TypedDict, total=False):
     page: int
-    currency: Literal["rub", "uah", "kzt", "byn", "usd", "eur", "gbp", "cny", "try", "jpy", "brl"]
+    currency: CurrencyModel
     status: Literal["paid", "not_paid"]
     amount: int | float
     merchant_id: int
 
 
 class PaymentsInvoiceListResponse(TypedDict):
-    invoices: list[dict[str, object]]
+    invoices: list[InvoiceModel]
     count: int
     page: int
     perPage: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PaymentsCurrencyResponse(TypedDict):
     currencyList: dict[str, object]
     lastUpdate: int
     visitorCurrency: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 PaymentsBalanceListResponse = TypedDict(
@@ -4742,7 +4732,7 @@ PaymentsBalanceListResponse = TypedDict(
     {
         "from": dict[str, object],
         "to": dict[str, object],
-        "system_info": dict[str, object],
+        "system_info": Resp_SystemInfo,
     },
 )
 
@@ -4758,14 +4748,14 @@ PaymentsBalanceexchangeResponse = TypedDict(
     {
         "from": dict[str, object],
         "to": dict[str, object],
-        "system_info": dict[str, object],
+        "system_info": Resp_SystemInfo,
     },
 )
 
 
 class _PaymentsTransferBodyRequired(TypedDict):
     amount: int
-    currency: Literal["rub", "uah", "kzt", "byn", "usd", "eur", "gbp", "cny", "try", "jpy", "brl"]
+    currency: CurrencyModel
 
 
 class PaymentsTransferBody(_PaymentsTransferBodyRequired, total=False):
@@ -4782,7 +4772,7 @@ class PaymentsTransferBody(_PaymentsTransferBodyRequired, total=False):
 class PaymentsTransferResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PaymentsFeeParams(TypedDict, total=False):
@@ -4793,7 +4783,7 @@ class PaymentsFeeResponse(TypedDict):
     commission_percentage: int
     spentCurrentMonth: int
     calculator: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PaymentsCancelBody(TypedDict):
@@ -4803,7 +4793,7 @@ class PaymentsCancelBody(TypedDict):
 class PaymentsCancelResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PaymentsHistoryParams(TypedDict, total=False):
@@ -4824,7 +4814,7 @@ class PaymentsHistoryParams(TypedDict, total=False):
     ]
     pmin: int
     pmax: int
-    currency: Literal["rub", "uah", "kzt", "byn", "usd", "eur", "gbp", "cny", "try", "jpy", "brl"]
+    currency: CurrencyModel
     page: int
     operation_id_lt: int
     receiver: str
@@ -4852,19 +4842,19 @@ class PaymentsHistoryResponse(TypedDict):
     hasNextPage: bool
     lastOperationId: int
     nextPageHref: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class PaymentsPayoutservicesResponse(TypedDict):
     systems: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _PaymentsPayoutBodyRequired(TypedDict):
     payment_system: str
     wallet: str
     amount: int | float
-    currency: Literal["rub", "uah", "kzt", "byn", "usd", "eur", "gbp", "cny", "try", "jpy", "brl"]
+    currency: CurrencyModel
 
 
 class PaymentsPayoutBody(_PaymentsPayoutBodyRequired, total=False):
@@ -4875,7 +4865,7 @@ class PaymentsPayoutBody(_PaymentsPayoutBodyRequired, total=False):
 class PaymentsPayoutResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── AutoPaymentsApi Types ────────────────────────────────────────
@@ -4883,7 +4873,7 @@ class PaymentsPayoutResponse(TypedDict, total=False):
 
 class AutoPaymentsListResponse(TypedDict):
     payments: dict[str, object]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class _AutoPaymentsCreateBodyRequired(TypedDict):
@@ -4924,7 +4914,7 @@ class _AutoPaymentsCreateBodyRequired(TypedDict):
 
 class AutoPaymentsCreateBody(_AutoPaymentsCreateBodyRequired, total=False):
     secret_answer: str
-    currency: Literal["rub", "uah", "kzt", "byn", "usd", "eur", "gbp", "cny", "try", "jpy", "brl"]
+    currency: CurrencyModel
     description: str
 
 
@@ -4932,7 +4922,7 @@ class AutoPaymentsCreateResponse(TypedDict):
     status: str
     message: str
     auto_payment_id: int
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class AutoPaymentsDeleteBody(TypedDict):
@@ -4942,7 +4932,7 @@ class AutoPaymentsDeleteBody(TypedDict):
 class AutoPaymentsDeleteResponse(TypedDict):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── ProxyApi Types ────────────────────────────────────────
@@ -4950,7 +4940,7 @@ class AutoPaymentsDeleteResponse(TypedDict):
 
 class ProxyGetResponse(TypedDict):
     proxies: list[dict[str, object]]
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProxyAddBody(TypedDict, total=False):
@@ -4964,7 +4954,7 @@ class ProxyAddBody(TypedDict, total=False):
 class ProxyAddResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ProxyDeleteBody(TypedDict, total=False):
@@ -4975,7 +4965,7 @@ class ProxyDeleteBody(TypedDict, total=False):
 class ProxyDeleteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── ImapApi Types ────────────────────────────────────────
@@ -4991,7 +4981,7 @@ class ImapCreateBody(TypedDict):
 class ImapCreateResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 class ImapDeleteBody(TypedDict):
@@ -5001,7 +4991,7 @@ class ImapDeleteBody(TypedDict):
 class ImapDeleteResponse(TypedDict, total=False):
     status: str
     message: str
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo
 
 
 # ─── BatchApi Types ────────────────────────────────────────
@@ -5015,4 +5005,4 @@ class _BatchBatchResponseRequired(TypedDict):
 
 
 class BatchBatchResponse(_BatchBatchResponseRequired, total=False):
-    system_info: dict[str, object]
+    system_info: Resp_SystemInfo

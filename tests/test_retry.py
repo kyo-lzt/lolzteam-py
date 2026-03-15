@@ -256,6 +256,46 @@ class TestAsyncWithRetry:
         assert calls == 1
 
     @patch("lolzteam.runtime.retry.asyncio.sleep")
+    async def test_on_retry_sync_callback_called(self, mock_sleep: object) -> None:
+        retries: list[int] = []
+
+        def on_retry(info: RetryInfo) -> None:
+            retries.append(info.attempt)
+
+        calls = 0
+
+        async def fn() -> str:
+            nonlocal calls
+            calls += 1
+            if calls <= 2:
+                raise RateLimitError(body={}, headers=EMPTY_HEADERS)
+            return "ok"
+
+        result = await async_with_retry(fn, CONFIG, DUMMY_OPTS, on_retry=on_retry)
+        assert result == "ok"
+        assert retries == [0, 1]
+
+    @patch("lolzteam.runtime.retry.asyncio.sleep")
+    async def test_on_retry_async_callback_called(self, mock_sleep: object) -> None:
+        retries: list[int] = []
+
+        async def on_retry(info: RetryInfo) -> None:
+            retries.append(info.attempt)
+
+        calls = 0
+
+        async def fn() -> str:
+            nonlocal calls
+            calls += 1
+            if calls <= 2:
+                raise RateLimitError(body={}, headers=EMPTY_HEADERS)
+            return "ok"
+
+        result = await async_with_retry(fn, CONFIG, DUMMY_OPTS, on_retry=on_retry)
+        assert result == "ok"
+        assert retries == [0, 1]
+
+    @patch("lolzteam.runtime.retry.asyncio.sleep")
     async def test_retries_503_then_succeeds(self, mock_sleep: object) -> None:
         calls = 0
 

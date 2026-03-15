@@ -13,7 +13,6 @@ from lolzteam.runtime.http_client import HttpClient
 from lolzteam.runtime.types import (
     ClientConfig,
     OnRetryCallback,
-    OnRetryCallbackAsync,
     ProxyConfig,
     RateLimitConfig,
     RequestOptions,
@@ -31,7 +30,6 @@ __all__ = [
     "NetworkError",
     "NotFoundError",
     "OnRetryCallback",
-    "OnRetryCallbackAsync",
     "ProxyConfig",
     "RateLimitConfig",
     "RateLimitError",

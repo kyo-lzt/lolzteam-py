@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import warnings
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
 import pytest
 
-from lolzteam import AsyncForumClient, AsyncMarketClient, ForumClient, MarketClient
+from lolzteam import AsyncForumClient, AsyncMarketClient, ClientConfig, ForumClient, MarketClient
 from lolzteam.runtime.errors import (
     AuthError,
     ConfigError,
@@ -15,6 +16,7 @@ from lolzteam.runtime.errors import (
     RetryExhaustedError,
     ServerError,
 )
+from lolzteam.runtime.types import RateLimitConfig, RetryConfig
 
 
 def _mock_response(
@@ -55,6 +57,7 @@ FORUM_API_GROUPS = [
 ]
 
 
+@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 class TestForumClient:
     def test_instantiation_defaults(self) -> None:
         client = ForumClient(token="test-token")
@@ -321,6 +324,7 @@ class TestForumClient:
 # ---------------------------------------------------------------------------
 # AsyncForumClient
 # ---------------------------------------------------------------------------
+@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 class TestAsyncForumClient:
     def test_instantiation(self) -> None:
         with patch("lolzteam.runtime.async_http_client.httpx.AsyncClient"):
@@ -424,6 +428,7 @@ MARKET_API_GROUPS = [
 ]
 
 
+@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 class TestMarketClient:
     def test_instantiation_defaults(self) -> None:
         client = MarketClient(token="test-token")
@@ -516,6 +521,7 @@ class TestMarketClient:
 # ---------------------------------------------------------------------------
 # AsyncMarketClient
 # ---------------------------------------------------------------------------
+@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 class TestAsyncMarketClient:
     def test_instantiation(self) -> None:
         with patch("lolzteam.runtime.async_http_client.httpx.AsyncClient"):
@@ -591,6 +597,7 @@ class TestAsyncMarketClient:
 # ---------------------------------------------------------------------------
 # Config edge cases
 # ---------------------------------------------------------------------------
+@pytest.mark.filterwarnings("ignore::DeprecationWarning")
 class TestConfig:
     def test_no_proxy_by_default(self) -> None:
         with patch("lolzteam.runtime.http_client.httpx.Client") as mock_cls:
@@ -644,3 +651,111 @@ class TestConfig:
         with patch("lolzteam.runtime.http_client.httpx.Client"):
             client = ForumClient(token="t", proxy="socks5://proxy:1080")
             client.close()
+
+
+# ---------------------------------------------------------------------------
+# ClientConfig constructor
+# ---------------------------------------------------------------------------
+class TestClientConfigConstructor:
+    def test_forum_client_with_config(self) -> None:
+        config = ClientConfig(
+            token="test-token",
+            base_url="https://prod-api.lolz.live",
+        )
+        client = ForumClient(config)
+        assert client._http._token == "test-token"
+        assert client._http._base_url == "https://prod-api.lolz.live"
+        client.close()
+
+    def test_market_client_with_config(self) -> None:
+        config = ClientConfig(
+            token="test-token",
+            base_url="https://prod-api.lzt.market",
+        )
+        client = MarketClient(config)
+        assert client._http._token == "test-token"
+        assert client._http._base_url == "https://prod-api.lzt.market"
+        client.close()
+
+    def test_async_forum_client_with_config(self) -> None:
+        with patch("lolzteam.runtime.async_http_client.httpx.AsyncClient"):
+            config = ClientConfig(
+                token="test-token",
+                base_url="https://prod-api.lolz.live",
+            )
+            client = AsyncForumClient(config)
+            assert client._http._token == "test-token"
+
+    def test_async_market_client_with_config(self) -> None:
+        with patch("lolzteam.runtime.async_http_client.httpx.AsyncClient"):
+            config = ClientConfig(
+                token="test-token",
+                base_url="https://prod-api.lzt.market",
+            )
+            client = AsyncMarketClient(config)
+            assert client._http._token == "test-token"
+
+    def test_config_with_retry(self) -> None:
+        config = ClientConfig(
+            token="t",
+            base_url="https://prod-api.lolz.live",
+            retry=RetryConfig(max_retries=5, base_delay=2.0, max_delay=60.0),
+        )
+        with patch("lolzteam.runtime.http_client.httpx.Client"):
+            client = ForumClient(config)
+            assert client._http._retry_config is not None
+            assert client._http._retry_config.max_retries == 5
+            assert client._http._retry_config.base_delay == 2.0
+            assert client._http._retry_config.max_delay == 60.0
+            client.close()
+
+    def test_config_with_rate_limit(self) -> None:
+        config = ClientConfig(
+            token="t",
+            base_url="https://prod-api.lolz.live",
+            rate_limit=RateLimitConfig(requests_per_minute=100),
+        )
+        with patch("lolzteam.runtime.http_client.httpx.Client"):
+            client = ForumClient(config)
+            assert client._http._rate_limiter is not None
+            client.close()
+
+    def test_no_config_no_token_raises(self) -> None:
+        with pytest.raises(ConfigError, match="either config or token must be provided"):
+            ForumClient()
+
+    def test_no_config_no_token_raises_market(self) -> None:
+        with pytest.raises(ConfigError, match="either config or token must be provided"):
+            MarketClient()
+
+    def test_token_kwarg_emits_deprecation_warning(self) -> None:
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            client = ForumClient(token="t")
+            assert len(w) == 1
+            assert issubclass(w[0].category, DeprecationWarning)
+            assert "deprecated" in str(w[0].message)
+            client.close()
+
+    def test_config_does_not_emit_deprecation_warning(self) -> None:
+        config = ClientConfig(
+            token="t",
+            base_url="https://prod-api.lolz.live",
+        )
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            client = ForumClient(config)
+            deprecation_warnings = [x for x in w if issubclass(x.category, DeprecationWarning)]
+            assert len(deprecation_warnings) == 0
+            client.close()
+
+    def test_config_api_groups_accessible(self) -> None:
+        config = ClientConfig(
+            token="t",
+            base_url="https://prod-api.lolz.live",
+        )
+        client = ForumClient(config)
+        assert hasattr(client, "threads")
+        assert hasattr(client, "posts")
+        assert hasattr(client, "users")
+        client.close()

@@ -4,11 +4,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from lolzteam.runtime.async_http_client import AsyncHttpClient
+from lolzteam.runtime.errors import ConfigError
 from lolzteam.runtime.http_client import HttpClient
 from lolzteam.runtime.types import (
     ClientConfig,
     OnRetryCallback,
-    OnRetryCallbackAsync,
     ProxyConfig,
     RateLimitConfig,
     RequestOptions,
@@ -3350,8 +3350,9 @@ class AsyncFormsApi:
 class ForumClient:
     def __init__(
         self,
-        token: str,
+        config: ClientConfig | None = None,
         *,
+        token: str | None = None,
         base_url: str = "https://prod-api.lolz.live",
         proxy: str | None = None,
         max_retries: int = 3,
@@ -3360,14 +3361,27 @@ class ForumClient:
         requests_per_minute: int = 300,
         on_retry: OnRetryCallback | None = None,
     ) -> None:
-        config = ClientConfig(
-            token=token,
-            base_url=base_url,
-            proxy=ProxyConfig(url=proxy) if proxy else None,
-            retry=RetryConfig(max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),
-            rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),
-            on_retry=on_retry,
-        )
+        if config is None:
+            if token is None:
+                raise ConfigError("either config or token must be provided")
+            import warnings
+
+            warnings.warn(
+                "ForumClient(token=...) is deprecated, "
+                "use ForumClient(ClientConfig(token=..., ...)) instead",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            config = ClientConfig(
+                token=token,
+                base_url=base_url,
+                proxy=ProxyConfig(url=proxy) if proxy else None,
+                retry=RetryConfig(
+                    max_retries=max_retries, base_delay=base_delay, max_delay=max_delay
+                ),
+                rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),
+                on_retry=on_retry,
+            )
         self._http = HttpClient(config)
         self.o_auth = OAuthApi(self._http)
         self.assets = AssetsApi(self._http)
@@ -3401,24 +3415,38 @@ class ForumClient:
 class AsyncForumClient:
     def __init__(
         self,
-        token: str,
+        config: ClientConfig | None = None,
         *,
+        token: str | None = None,
         base_url: str = "https://prod-api.lolz.live",
         proxy: str | None = None,
         max_retries: int = 3,
         base_delay: float = 1.0,
         max_delay: float = 30.0,
         requests_per_minute: int = 300,
-        on_retry: OnRetryCallbackAsync | None = None,
+        on_retry: OnRetryCallback | None = None,
     ) -> None:
-        config = ClientConfig(
-            token=token,
-            base_url=base_url,
-            proxy=ProxyConfig(url=proxy) if proxy else None,
-            retry=RetryConfig(max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),
-            rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),
-            on_retry_async=on_retry,
-        )
+        if config is None:
+            if token is None:
+                raise ConfigError("either config or token must be provided")
+            import warnings
+
+            warnings.warn(
+                "AsyncForumClient(token=...) is deprecated, "
+                "use AsyncForumClient(ClientConfig(token=..., ...)) instead",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            config = ClientConfig(
+                token=token,
+                base_url=base_url,
+                proxy=ProxyConfig(url=proxy) if proxy else None,
+                retry=RetryConfig(
+                    max_retries=max_retries, base_delay=base_delay, max_delay=max_delay
+                ),
+                rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),
+                on_retry=on_retry,
+            )
         self._http = AsyncHttpClient(config)
         self.o_auth = AsyncOAuthApi(self._http)
         self.assets = AsyncAssetsApi(self._http)

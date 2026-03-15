@@ -13,7 +13,6 @@ if TYPE_CHECKING:
 
     from lolzteam.runtime.types import (
         OnRetryCallback,
-        OnRetryCallbackAsync,
         RequestOptions,
         RetryConfig,
     )
@@ -73,7 +72,7 @@ async def async_with_retry(
     fn: Callable[[], Awaitable[_T]],
     config: RetryConfig,
     options: RequestOptions,
-    on_retry: OnRetryCallbackAsync | None = None,
+    on_retry: OnRetryCallback | None = None,
 ) -> _T:
     for attempt in range(config.max_retries + 1):
         try:
@@ -87,15 +86,17 @@ async def async_with_retry(
                 raise
             delay = compute_delay(attempt, config, error)
             if on_retry is not None:
-                await on_retry(
-                    RetryInfo(
-                        attempt=attempt,
-                        delay=delay,
-                        error=error,
-                        method=options.method,
-                        path=options.path,
-                    )
+                info = RetryInfo(
+                    attempt=attempt,
+                    delay=delay,
+                    error=error,
+                    method=options.method,
+                    path=options.path,
                 )
+                if asyncio.iscoroutinefunction(on_retry):
+                    await on_retry(info)
+                else:
+                    on_retry(info)
             await asyncio.sleep(delay)
 
     raise AssertionError("unreachable")

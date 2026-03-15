@@ -372,11 +372,11 @@ def emit_combined_file(
 
     # Runtime imports (needed at runtime)
     lines.append("from lolzteam.runtime.async_http_client import AsyncHttpClient")
+    lines.append("from lolzteam.runtime.errors import ConfigError")
     lines.append("from lolzteam.runtime.http_client import HttpClient")
     lines.append("from lolzteam.runtime.types import (")
     lines.append("    ClientConfig,")
     lines.append("    OnRetryCallback,")
-    lines.append("    OnRetryCallbackAsync,")
     lines.append("    ProxyConfig,")
     lines.append("    RateLimitConfig,")
     lines.append("    RequestOptions,")
@@ -410,8 +410,9 @@ def emit_combined_file(
     lines.append(f"class {client_name}:")
     lines.append("    def __init__(")
     lines.append("        self,")
-    lines.append("        token: str,")
+    lines.append("        config: ClientConfig | None = None,")
     lines.append("        *,")
+    lines.append("        token: str | None = None,")
     lines.append(f'        base_url: str = "{default_base_url}",')
     lines.append("        proxy: str | None = None,")
     lines.append("        max_retries: int = 3,")
@@ -422,22 +423,41 @@ def emit_combined_file(
         lines.append(f"        search_requests_per_minute: int = {default_search_rate_limit},")
     lines.append("        on_retry: OnRetryCallback | None = None,")
     lines.append("    ) -> None:")
-    lines.append("        config = ClientConfig(")
-    lines.append("            token=token,")
-    lines.append("            base_url=base_url,")
-    lines.append("            proxy=ProxyConfig(url=proxy) if proxy else None,")
+    lines.append("        if config is None:")
+    lines.append("            if token is None:")
     lines.append(
-        "            retry=RetryConfig("
+        '                raise ConfigError("either config or token must be provided")'
+    )
+    lines.append("            import warnings")
+    lines.append("            warnings.warn(")
+    lines.append(
+        f'                "{client_name}(token=...) is deprecated, "',
+    )
+    lines.append(
+        f'                "use {client_name}(ClientConfig(token=..., ...)) instead",'
+    )
+    lines.append("                DeprecationWarning,")
+    lines.append("                stacklevel=2,")
+    lines.append("            )")
+    lines.append("            config = ClientConfig(")
+    lines.append("                token=token,")
+    lines.append("                base_url=base_url,")
+    lines.append("                proxy=ProxyConfig(url=proxy) if proxy else None,")
+    lines.append(
+        "                retry=RetryConfig("
         "max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),"
     )
-    lines.append("            rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),")
+    lines.append(
+        "                rate_limit=RateLimitConfig("
+        "requests_per_minute=requests_per_minute),"
+    )
     if default_search_rate_limit is not None:
         lines.append(
-            "            search_rate_limit=RateLimitConfig("
+            "                search_rate_limit=RateLimitConfig("
             "requests_per_minute=search_requests_per_minute),"
         )
-    lines.append("            on_retry=on_retry,")
-    lines.append("        )")
+    lines.append("                on_retry=on_retry,")
+    lines.append("            )")
     lines.append("        self._http = HttpClient(config)")
 
     for group in groups:
@@ -461,8 +481,9 @@ def emit_combined_file(
     lines.append(f"class {async_client_name}:")
     lines.append("    def __init__(")
     lines.append("        self,")
-    lines.append("        token: str,")
+    lines.append("        config: ClientConfig | None = None,")
     lines.append("        *,")
+    lines.append("        token: str | None = None,")
     lines.append(f'        base_url: str = "{default_base_url}",')
     lines.append("        proxy: str | None = None,")
     lines.append("        max_retries: int = 3,")
@@ -471,24 +492,43 @@ def emit_combined_file(
     lines.append(f"        requests_per_minute: int = {default_rate_limit},")
     if default_search_rate_limit is not None:
         lines.append(f"        search_requests_per_minute: int = {default_search_rate_limit},")
-    lines.append("        on_retry: OnRetryCallbackAsync | None = None,")
+    lines.append("        on_retry: OnRetryCallback | None = None,")
     lines.append("    ) -> None:")
-    lines.append("        config = ClientConfig(")
-    lines.append("            token=token,")
-    lines.append("            base_url=base_url,")
-    lines.append("            proxy=ProxyConfig(url=proxy) if proxy else None,")
+    lines.append("        if config is None:")
+    lines.append("            if token is None:")
     lines.append(
-        "            retry=RetryConfig("
+        '                raise ConfigError("either config or token must be provided")'
+    )
+    lines.append("            import warnings")
+    lines.append("            warnings.warn(")
+    lines.append(
+        f'                "{async_client_name}(token=...) is deprecated, "',
+    )
+    lines.append(
+        f'                "use {async_client_name}(ClientConfig(token=..., ...)) instead",'
+    )
+    lines.append("                DeprecationWarning,")
+    lines.append("                stacklevel=2,")
+    lines.append("            )")
+    lines.append("            config = ClientConfig(")
+    lines.append("                token=token,")
+    lines.append("                base_url=base_url,")
+    lines.append("                proxy=ProxyConfig(url=proxy) if proxy else None,")
+    lines.append(
+        "                retry=RetryConfig("
         "max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),"
     )
-    lines.append("            rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),")
+    lines.append(
+        "                rate_limit=RateLimitConfig("
+        "requests_per_minute=requests_per_minute),"
+    )
     if default_search_rate_limit is not None:
         lines.append(
-            "            search_rate_limit=RateLimitConfig("
+            "                search_rate_limit=RateLimitConfig("
             "requests_per_minute=search_requests_per_minute),"
         )
-    lines.append("            on_retry_async=on_retry,")
-    lines.append("        )")
+    lines.append("                on_retry=on_retry,")
+    lines.append("            )")
     lines.append("        self._http = AsyncHttpClient(config)")
 
     for group in groups:

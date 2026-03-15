@@ -83,7 +83,7 @@ class AsyncHttpClient:
             raise ConfigError("base_url is required")
         self._base_url = config.base_url.rstrip("/")
         self._retry_config = config.retry
-        self._on_retry = config.on_retry_async
+        self._on_retry = config.on_retry
 
         self._rate_limiter: RateLimiter | None = None
         if config.rate_limit is not None:

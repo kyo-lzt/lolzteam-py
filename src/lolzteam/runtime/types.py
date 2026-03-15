@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Awaitable, Callable
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Literal
 
@@ -29,7 +29,6 @@ class RetryInfo:
 
 
 OnRetryCallback = Callable[[RetryInfo], None]
-OnRetryCallbackAsync = Callable[[RetryInfo], Awaitable[None]]
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,7 +52,6 @@ class ClientConfig:
     rate_limit: RateLimitConfig | None = None
     search_rate_limit: RateLimitConfig | None = None
     on_retry: OnRetryCallback | None = None
-    on_retry_async: OnRetryCallbackAsync | None = None
     timeout: float | None = None  # seconds
 
 

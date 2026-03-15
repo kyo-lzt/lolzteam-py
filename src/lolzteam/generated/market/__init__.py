@@ -4,11 +4,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Literal
 
 from lolzteam.runtime.async_http_client import AsyncHttpClient
+from lolzteam.runtime.errors import ConfigError
 from lolzteam.runtime.http_client import HttpClient
 from lolzteam.runtime.types import (
     ClientConfig,
     OnRetryCallback,
-    OnRetryCallbackAsync,
     ProxyConfig,
     RateLimitConfig,
     RequestOptions,
@@ -2735,8 +2735,9 @@ class AsyncBatchApi:
 class MarketClient:
     def __init__(
         self,
-        token: str,
+        config: ClientConfig | None = None,
         *,
+        token: str | None = None,
         base_url: str = "https://prod-api.lzt.market",
         proxy: str | None = None,
         max_retries: int = 3,
@@ -2746,15 +2747,28 @@ class MarketClient:
         search_requests_per_minute: int = 20,
         on_retry: OnRetryCallback | None = None,
     ) -> None:
-        config = ClientConfig(
-            token=token,
-            base_url=base_url,
-            proxy=ProxyConfig(url=proxy) if proxy else None,
-            retry=RetryConfig(max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),
-            rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),
-            search_rate_limit=RateLimitConfig(requests_per_minute=search_requests_per_minute),
-            on_retry=on_retry,
-        )
+        if config is None:
+            if token is None:
+                raise ConfigError("either config or token must be provided")
+            import warnings
+
+            warnings.warn(
+                "MarketClient(token=...) is deprecated, "
+                "use MarketClient(ClientConfig(token=..., ...)) instead",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            config = ClientConfig(
+                token=token,
+                base_url=base_url,
+                proxy=ProxyConfig(url=proxy) if proxy else None,
+                retry=RetryConfig(
+                    max_retries=max_retries, base_delay=base_delay, max_delay=max_delay
+                ),
+                rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),
+                search_rate_limit=RateLimitConfig(requests_per_minute=search_requests_per_minute),
+                on_retry=on_retry,
+            )
         self._http = HttpClient(config)
         self.category = CategoryApi(self._http)
         self.list = ListApi(self._http)
@@ -2783,8 +2797,9 @@ class MarketClient:
 class AsyncMarketClient:
     def __init__(
         self,
-        token: str,
+        config: ClientConfig | None = None,
         *,
+        token: str | None = None,
         base_url: str = "https://prod-api.lzt.market",
         proxy: str | None = None,
         max_retries: int = 3,
@@ -2792,17 +2807,30 @@ class AsyncMarketClient:
         max_delay: float = 30.0,
         requests_per_minute: int = 120,
         search_requests_per_minute: int = 20,
-        on_retry: OnRetryCallbackAsync | None = None,
+        on_retry: OnRetryCallback | None = None,
     ) -> None:
-        config = ClientConfig(
-            token=token,
-            base_url=base_url,
-            proxy=ProxyConfig(url=proxy) if proxy else None,
-            retry=RetryConfig(max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),
-            rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),
-            search_rate_limit=RateLimitConfig(requests_per_minute=search_requests_per_minute),
-            on_retry_async=on_retry,
-        )
+        if config is None:
+            if token is None:
+                raise ConfigError("either config or token must be provided")
+            import warnings
+
+            warnings.warn(
+                "AsyncMarketClient(token=...) is deprecated, "
+                "use AsyncMarketClient(ClientConfig(token=..., ...)) instead",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            config = ClientConfig(
+                token=token,
+                base_url=base_url,
+                proxy=ProxyConfig(url=proxy) if proxy else None,
+                retry=RetryConfig(
+                    max_retries=max_retries, base_delay=base_delay, max_delay=max_delay
+                ),
+                rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),
+                search_rate_limit=RateLimitConfig(requests_per_minute=search_requests_per_minute),
+                on_retry=on_retry,
+            )
         self._http = AsyncHttpClient(config)
         self.category = AsyncCategoryApi(self._http)
         self.list = AsyncListApi(self._http)

@@ -977,6 +977,7 @@ class ListApi:
                 method="GET",
                 path=f"/user/{type}/download",
                 query=params,
+                is_html=True,
             )
         )  # type: ignore[return-value]
 
@@ -1038,6 +1039,7 @@ class AsyncListApi:
                 method="GET",
                 path=f"/user/{type}/download",
                 query=params,
+                is_html=True,
             )
         )  # type: ignore[return-value]
 
@@ -1133,6 +1135,7 @@ class ManagingApi:
                 method="GET",
                 path=f"/{item_id}/steam-preview",
                 query=params,
+                is_html=True,
             )
         )  # type: ignore[return-value]
 
@@ -1520,6 +1523,7 @@ class AsyncManagingApi:
                 method="GET",
                 path=f"/{item_id}/steam-preview",
                 query=params,
+                is_html=True,
             )
         )  # type: ignore[return-value]
 

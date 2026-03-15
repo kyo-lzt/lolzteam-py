@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from codegen.transforms.types import (
     drain_inline_types,
+    emit_defaults_dict,
     emit_typed_dict_fields,
     generate_typed_dict,
     reset_inline_types,
@@ -14,6 +15,7 @@ from codegen.utils.naming import (
     build_type_name,
     group_to_class_name,
     group_to_property_name,
+    variant_title_to_suffix,
 )
 
 if TYPE_CHECKING:
@@ -35,16 +37,20 @@ def _emit_query_params_typed_dict(
         return None
 
     type_name = f"{build_type_name(group, method.method_name)}Params"
-    required_fields: list[tuple[str, str]] = []
-    optional_fields: list[tuple[str, str]] = []
+    required_fields: list[tuple[str, str, object | None]] = []
+    optional_fields: list[tuple[str, str, object | None]] = []
 
     for param in method.params.query_params:
         if param.required:
-            required_fields.append((param.name, param.type))
+            required_fields.append((param.name, param.type, param.default))
         else:
-            optional_fields.append((param.name, param.type))
+            optional_fields.append((param.name, param.type, param.default))
 
-    return type_name, emit_typed_dict_fields(type_name, required_fields, optional_fields)
+    code = emit_typed_dict_fields(type_name, required_fields, optional_fields)
+    defaults_code = emit_defaults_dict(type_name, required_fields + optional_fields)
+    if defaults_code:
+        code = f"{code}\n\n\n{defaults_code}"
+    return type_name, code
 
 
 def _emit_body_typed_dict(
@@ -57,6 +63,10 @@ def _emit_body_typed_dict(
 
     type_name = f"{build_type_name(group, method.method_name)}Body"
 
+    # Discriminated union — emit separate TypedDicts per variant + union alias
+    if method.body_variants:
+        return _emit_discriminated_body(type_name, group, method)
+
     # Array body — emit a type alias instead of a TypedDict
     if method.body_is_array:
         return type_name, f"{type_name} = list[{method.body_array_item_type}]"
@@ -64,16 +74,52 @@ def _emit_body_typed_dict(
     if not method.body_properties:
         return None
 
-    required_fields: list[tuple[str, str]] = []
-    optional_fields: list[tuple[str, str]] = []
+    required_fields: list[tuple[str, str, object | None]] = []
+    optional_fields: list[tuple[str, str, object | None]] = []
 
     for prop in method.body_properties:
         if prop.required:
-            required_fields.append((prop.name, prop.type))
+            required_fields.append((prop.name, prop.type, prop.default))
         else:
-            optional_fields.append((prop.name, prop.type))
+            optional_fields.append((prop.name, prop.type, prop.default))
 
-    return type_name, emit_typed_dict_fields(type_name, required_fields, optional_fields)
+    code = emit_typed_dict_fields(type_name, required_fields, optional_fields)
+    defaults_code = emit_defaults_dict(type_name, required_fields + optional_fields)
+    if defaults_code:
+        code = f"{code}\n\n\n{defaults_code}"
+    return type_name, code
+
+
+def _emit_discriminated_body(
+    union_name: str,
+    group: str,
+    method: MethodDefinition,
+) -> tuple[str, str]:
+    """Emit TypedDicts for each discriminated variant + a union type alias."""
+    parts: list[str] = []
+    variant_names: list[str] = []
+
+    for variant in method.body_variants:
+        suffix = variant_title_to_suffix(variant.title)
+        variant_name = f"{build_type_name(group, method.method_name)}{suffix}Body"
+        variant_names.append(variant_name)
+
+        required_fields: list[tuple[str, str, object | None]] = []
+        optional_fields: list[tuple[str, str, object | None]] = []
+
+        for prop in variant.properties:
+            if prop.required:
+                required_fields.append((prop.name, prop.type, prop.default))
+            else:
+                optional_fields.append((prop.name, prop.type, prop.default))
+
+        parts.append(emit_typed_dict_fields(variant_name, required_fields, optional_fields))
+
+    # Union alias
+    union_members = " | ".join(variant_names)
+    parts.append(f"{union_name} = {union_members}")
+
+    return union_name, "\n\n\n".join(parts)
 
 
 def _emit_response_type(group: str, method: MethodDefinition) -> tuple[str, str]:
@@ -202,7 +248,9 @@ def _emit_sync_method(group: str, method: MethodDefinition, *, is_search: bool =
 
     # Keyword-only marker
     body_type_name = f"{build_type_name(group, method.method_name)}Body"
-    has_body_type = method.has_body and (len(method.body_properties) > 0 or method.body_is_array)
+    has_body_type = method.has_body and (
+        len(method.body_properties) > 0 or method.body_is_array or len(method.body_variants) > 0
+    )
     query_type_name = f"{build_type_name(group, method.method_name)}Params"
     has_query_type = len(method.params.query_params) > 0
 
@@ -216,8 +264,10 @@ def _emit_sync_method(group: str, method: MethodDefinition, *, is_search: bool =
     if has_body_type or has_query_type:
         args.append("*")
 
-    body_effectively_required = method.body_required or any(
-        p.required for p in method.body_properties
+    body_effectively_required = (
+        method.body_required
+        or any(p.required for p in method.body_properties)
+        or len(method.body_variants) > 0
     )
     if has_body_type:
         if body_effectively_required:
@@ -249,6 +299,8 @@ def _emit_sync_method(group: str, method: MethodDefinition, *, is_search: bool =
         lines.append(f'            content_type="{method.content_type}",')
     if is_search:
         lines.append("            is_search=True,")
+    if method.response_is_html:
+        lines.append("            is_html=True,")
 
     lines.append("        ))  # type: ignore[return-value]")
 
@@ -266,7 +318,9 @@ def _emit_async_method(group: str, method: MethodDefinition, *, is_search: bool 
         args.append(f"{param.name}: {param.type}")
 
     body_type_name = f"{build_type_name(group, method.method_name)}Body"
-    has_body_type = method.has_body and (len(method.body_properties) > 0 or method.body_is_array)
+    has_body_type = method.has_body and (
+        len(method.body_properties) > 0 or method.body_is_array or len(method.body_variants) > 0
+    )
     query_type_name = f"{build_type_name(group, method.method_name)}Params"
     has_query_type = len(method.params.query_params) > 0
 
@@ -280,8 +334,10 @@ def _emit_async_method(group: str, method: MethodDefinition, *, is_search: bool 
     if has_body_type or has_query_type:
         args.append("*")
 
-    body_effectively_required = method.body_required or any(
-        p.required for p in method.body_properties
+    body_effectively_required = (
+        method.body_required
+        or any(p.required for p in method.body_properties)
+        or len(method.body_variants) > 0
     )
     if has_body_type:
         if body_effectively_required:
@@ -313,6 +369,8 @@ def _emit_async_method(group: str, method: MethodDefinition, *, is_search: bool 
         lines.append(f'            content_type="{method.content_type}",')
     if is_search:
         lines.append("            is_search=True,")
+    if method.response_is_html:
+        lines.append("            is_html=True,")
 
     lines.append("        ))  # type: ignore[return-value]")
 
@@ -400,7 +458,9 @@ def emit_combined_file(
             type_imports.append(f"{base}Response")
             if method.params.query_params:
                 type_imports.append(f"{base}Params")
-            if method.has_body and (method.body_properties or method.body_is_array):
+            if method.has_body and (
+                method.body_properties or method.body_is_array or method.body_variants
+            ):
                 type_imports.append(f"{base}Body")
             for param in method.params.path_params:
                 if "Literal[" in param.type:

@@ -72,19 +72,15 @@ def schema_to_type_string(
     # enum -> Literal union (skip huge enums, use base type instead)
     enum_vals = schema.get("enum")
     if isinstance(enum_vals, list) and len(enum_vals) > 0:
-        if len(enum_vals) > 50:
-            # Too many values for Literal, fall through to base type
-            pass
-        else:
-            literals: list[str] = []
-            for v in enum_vals:
-                if isinstance(v, str):
-                    escaped = v.replace("\\", "\\\\").replace('"', '\\"')
-                    literals.append(f'"{escaped}"')
-                elif isinstance(v, (int, float)):
-                    literals.append(str(v))
-            if literals:
-                return "Literal[" + ", ".join(literals) + "]"
+        literals: list[str] = []
+        for v in enum_vals:
+            if isinstance(v, str):
+                escaped = v.replace("\\", "\\\\").replace('"', '\\"')
+                literals.append(f'"{escaped}"')
+            elif isinstance(v, (int, float)):
+                literals.append(str(v))
+        if literals:
+            return "Literal[" + ", ".join(literals) + "]"
 
     # oneOf / anyOf -> union
     one_of = schema.get("oneOf")
@@ -216,8 +212,8 @@ def _is_valid_identifier(name: str) -> bool:
     return name.isidentifier() and not keyword.iskeyword(name)
 
 
-def _needs_functional_form(fields: list[tuple[str, str]]) -> bool:
-    return any(not _is_valid_identifier(name) for name, _ in fields)
+def _needs_functional_form(fields: list[FieldTuple]) -> bool:
+    return any(not _is_valid_identifier(f[0]) for f in fields)
 
 
 def generate_typed_dict(
@@ -284,34 +280,98 @@ def generate_typed_dict(
     return "\n".join(lines)
 
 
+def _format_default(value: object) -> str:
+    """Format a schema default value as a Python-style comment suffix."""
+    if isinstance(value, bool):
+        return f"  # default: {value}"
+    if isinstance(value, str):
+        return f'  # default: "{value}"'
+    if isinstance(value, (int, float)):
+        return f"  # default: {value}"
+    return ""
+
+
+def _format_default_value(value: object) -> str | None:
+    """Format a schema default value as a Python literal. Returns None if not representable."""
+    if isinstance(value, bool):
+        return "True" if value else "False"
+    if isinstance(value, str):
+        escaped = value.replace("\\", "\\\\").replace('"', '\\"')
+        return f'"{escaped}"'
+    if isinstance(value, int):
+        return str(value)
+    if isinstance(value, float):
+        return str(value)
+    return None
+
+
+def emit_defaults_dict(
+    type_name: str,
+    fields: list[FieldTuple],
+) -> str | None:
+    """Emit a DEFAULTS dict for a TypedDict with fields that have default values.
+
+    Returns None if no fields have defaults.
+    """
+    entries: list[tuple[str, str]] = []
+    for f in fields:
+        default = _field_default(f)
+        if default is None:
+            continue
+        formatted = _format_default_value(default)
+        if formatted is None:
+            continue
+        entries.append((f[0], formatted))
+
+    if not entries:
+        return None
+
+    lines: list[str] = [f"{type_name}_DEFAULTS: dict[str, object] = {{"]
+    for name, val in entries:
+        lines.append(f'    "{name}": {val},')
+    lines.append("}")
+    return "\n".join(lines)
+
+
+FieldTuple = tuple[str, str] | tuple[str, str, object | None]
+
+
+def _field_default(field: FieldTuple) -> object | None:
+    """Extract default from a field tuple (2 or 3 elements)."""
+    return field[2] if len(field) >= 3 else None
+
+
 def _emit_functional_typed_dict(
     name: str,
-    required_fields: list[tuple[str, str]],
-    optional_fields: list[tuple[str, str]],
+    required_fields: list[FieldTuple],
+    optional_fields: list[FieldTuple],
 ) -> str:
     """Emit TypedDict using functional form (for field names with special chars)."""
     lines: list[str] = []
-    required_names = {fname for fname, _ in required_fields}
+    required_names = {f[0] for f in required_fields}
     all_fields = required_fields + optional_fields
 
     if required_fields and optional_fields:
         # Use total=False + Required[] for required fields
         lines.append(f'{name} = TypedDict("{name}", {{')
-        for fname, ftype in all_fields:
-            if fname in required_names:
-                lines.append(f'    "{fname}": Required[{ftype}],')
+        for f in all_fields:
+            comment = _format_default(_field_default(f))
+            if f[0] in required_names:
+                lines.append(f'    "{f[0]}": Required[{f[1]}],{comment}')
             else:
-                lines.append(f'    "{fname}": {ftype},')
+                lines.append(f'    "{f[0]}": {f[1]},{comment}')
         lines.append("}, total=False)")
     elif required_fields:
         lines.append(f'{name} = TypedDict("{name}", {{')
-        for fname, ftype in required_fields:
-            lines.append(f'    "{fname}": {ftype},')
+        for f in required_fields:
+            comment = _format_default(_field_default(f))
+            lines.append(f'    "{f[0]}": {f[1]},{comment}')
         lines.append("})")
     else:
         lines.append(f'{name} = TypedDict("{name}", {{')
-        for fname, ftype in optional_fields:
-            lines.append(f'    "{fname}": {ftype},')
+        for f in optional_fields:
+            comment = _format_default(_field_default(f))
+            lines.append(f'    "{f[0]}": {f[1]},{comment}')
         lines.append("}, total=False)")
 
     return "\n".join(lines)
@@ -319,8 +379,8 @@ def _emit_functional_typed_dict(
 
 def emit_typed_dict_fields(
     type_name: str,
-    required_fields: list[tuple[str, str]],
-    optional_fields: list[tuple[str, str]],
+    required_fields: list[FieldTuple],
+    optional_fields: list[FieldTuple],
 ) -> str:
     """Emit TypedDict for params/body, choosing class or functional form."""
     all_fields = required_fields + optional_fields
@@ -331,20 +391,24 @@ def emit_typed_dict_fields(
     if required_fields and optional_fields:
         base_name = f"_{type_name}Required"
         lines.append(f"class {base_name}(TypedDict):")
-        for fname, ftype in required_fields:
-            lines.append(f"    {fname}: {ftype}")
+        for f in required_fields:
+            comment = _format_default(_field_default(f))
+            lines.append(f"    {f[0]}: {f[1]}{comment}")
         lines.append("")
         lines.append("")
         lines.append(f"class {type_name}({base_name}, total=False):")
-        for fname, ftype in optional_fields:
-            lines.append(f"    {fname}: {ftype}")
+        for f in optional_fields:
+            comment = _format_default(_field_default(f))
+            lines.append(f"    {f[0]}: {f[1]}{comment}")
     elif required_fields:
         lines.append(f"class {type_name}(TypedDict):")
-        for fname, ftype in required_fields:
-            lines.append(f"    {fname}: {ftype}")
+        for f in required_fields:
+            comment = _format_default(_field_default(f))
+            lines.append(f"    {f[0]}: {f[1]}{comment}")
     else:
         lines.append(f"class {type_name}(TypedDict, total=False):")
-        for fname, ftype in optional_fields:
-            lines.append(f"    {fname}: {ftype}")
+        for f in optional_fields:
+            comment = _format_default(_field_default(f))
+            lines.append(f"    {f[0]}: {f[1]}{comment}")
 
     return "\n".join(lines)

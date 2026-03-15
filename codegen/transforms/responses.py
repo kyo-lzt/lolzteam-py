@@ -14,6 +14,7 @@ Spec = dict[str, object]
 class ResponseInfo:
     type_string: str
     schema: SchemaObject | None
+    is_html: bool = False
 
 
 def extract_response_info(operation: dict[str, object], spec: Spec) -> ResponseInfo:
@@ -33,6 +34,10 @@ def extract_response_info(operation: dict[str, object], spec: Spec) -> ResponseI
     content = success.get("content")
     if not isinstance(content, dict):
         return ResponseInfo(type_string="object", schema=None)
+
+    # text/html responses return raw string
+    if "text/html" in content and "application/json" not in content:
+        return ResponseInfo(type_string="str", schema=None, is_html=True)
 
     json_content = content.get("application/json")
     if not isinstance(json_content, dict):

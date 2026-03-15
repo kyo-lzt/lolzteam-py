@@ -63,6 +63,12 @@ def group_to_property_name(group: str) -> str:
     return _camel_to_snake(group)
 
 
+def variant_title_to_suffix(title: str) -> str:
+    """Convert a variant title like 'Client Credentials' to 'ClientCredentials'."""
+    parts = re.split(r"[^0-9a-zA-Z]+", title)
+    return "".join(_capitalize_first(p) for p in parts if p)
+
+
 def build_type_name(group: str, method: str) -> str:
     """Build a type name prefix from group + method.
 

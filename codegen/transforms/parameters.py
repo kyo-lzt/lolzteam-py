@@ -15,6 +15,7 @@ class ParsedParameter:
     name: str
     type: str
     required: bool
+    default: object | None = None
 
 
 @dataclass
@@ -48,8 +49,9 @@ def extract_parameters(operation: dict[str, object], spec: Spec) -> OperationPar
         schema = param.get("schema")
         type_str = schema_to_type_string(schema, spec) if isinstance(schema, dict) else "object"
         required = bool(param.get("required", False))
+        default = schema.get("default") if isinstance(schema, dict) else None
 
-        parsed = ParsedParameter(name=name, type=type_str, required=required)
+        parsed = ParsedParameter(name=name, type=type_str, required=required, default=default)
 
         if param_in == "path":
             parsed.required = True  # path params are always required

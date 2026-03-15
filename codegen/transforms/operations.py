@@ -17,6 +17,17 @@ class BodyProperty:
     name: str
     type: str
     required: bool
+    default: object | None = None
+
+
+@dataclass
+class BodyVariant:
+    """A single variant in a discriminated oneOf body."""
+
+    title: str
+    discriminator_field: str
+    discriminator_value: str | int
+    properties: list[BodyProperty]
 
 
 @dataclass
@@ -34,6 +45,113 @@ class MethodDefinition:
     content_type: str = "form"  # "form", "json", or "multipart"
     body_is_array: bool = False
     body_array_item_type: str = "object"
+    body_variants: list[BodyVariant] = field(default_factory=list)
+    response_is_html: bool = False
+
+
+def _detect_discriminator(variants: list[object]) -> str | None:
+    """Find a field that acts as discriminator across all oneOf variants.
+
+    A field is a discriminator if every variant has it as a property with a
+    single-value enum.
+    """
+    if len(variants) < 2:
+        return None
+
+    # Collect candidate fields from first variant
+    first = variants[0]
+    if not isinstance(first, dict):
+        return None
+    first_props = first.get("properties")
+    if not isinstance(first_props, dict):
+        return None
+
+    candidates: list[str] = []
+    for name, prop_schema in first_props.items():
+        if isinstance(prop_schema, dict):
+            enum = prop_schema.get("enum")
+            if isinstance(enum, list) and len(enum) == 1:
+                candidates.append(name)
+
+    # Check each candidate against all variants
+    for candidate in candidates:
+        all_match = True
+        for variant in variants:
+            if not isinstance(variant, dict):
+                all_match = False
+                break
+            v_props = variant.get("properties")
+            if not isinstance(v_props, dict):
+                all_match = False
+                break
+            prop = v_props.get(candidate)
+            if not isinstance(prop, dict):
+                all_match = False
+                break
+            enum = prop.get("enum")
+            if not isinstance(enum, list) or len(enum) != 1:
+                all_match = False
+                break
+        if all_match:
+            return candidate
+
+    return None
+
+
+def _extract_discriminated_variants(
+    variants: list[object],
+    discriminator: str,
+    spec: Spec,
+) -> BodyExtractionResult:
+    """Extract body variants for a discriminated oneOf schema."""
+    result_variants: list[BodyVariant] = []
+
+    for variant in variants:
+        if not isinstance(variant, dict):
+            continue
+        title = variant.get("title")
+        if not isinstance(title, str):
+            title = "Unknown"
+        v_props = variant.get("properties")
+        if not isinstance(v_props, dict):
+            continue
+
+        disc_prop = v_props.get(discriminator)
+        if not isinstance(disc_prop, dict):
+            continue
+        disc_enum = disc_prop.get("enum")
+        if not isinstance(disc_enum, list) or len(disc_enum) != 1:
+            continue
+        disc_value = disc_enum[0]
+
+        raw_required = variant.get("required")
+        required_set: set[str] = set()
+        if isinstance(raw_required, list):
+            required_set = {r for r in raw_required if isinstance(r, str)}
+
+        props: list[BodyProperty] = []
+        for name, prop_schema in v_props.items():
+            if not isinstance(prop_schema, dict):
+                continue
+            props.append(
+                BodyProperty(
+                    name=name,
+                    type=schema_to_type_string(prop_schema, spec),
+                    required=name in required_set,
+                    default=prop_schema.get("default"),
+                )
+            )
+
+        result_variants.append(
+            BodyVariant(
+                title=title,
+                discriminator_field=discriminator,
+                discriminator_value=disc_value,
+                properties=props,
+            )
+        )
+
+    return BodyExtractionResult(variants=result_variants)
 
 
 def _detect_content_type(operation: dict[str, object], spec: Spec) -> str:
@@ -60,6 +178,7 @@ class BodyExtractionResult:
     properties: list[BodyProperty] = field(default_factory=list)
     is_array: bool = False
     array_item_type: str = "object"
+    variants: list[BodyVariant] = field(default_factory=list)
 
 
 def _extract_body(
@@ -96,9 +215,13 @@ def _extract_body(
 
     body_properties: list[BodyProperty] = []
 
-    # Handle oneOf -- merge all properties from all variants
+    # Handle oneOf -- detect discriminated union or merge flat
     one_of = schema.get("oneOf")
     if isinstance(one_of, list):
+        discriminator = _detect_discriminator(one_of)
+        if discriminator is not None:
+            return _extract_discriminated_variants(one_of, discriminator, spec)
+
         all_props: dict[str, dict[str, object]] = {}
         variant_required_sets: list[set[str]] = []
         for variant in one_of:
@@ -138,6 +261,7 @@ def _extract_body(
                     name=name,
                     type=schema_to_type_string(prop_schema, spec),
                     required=name in all_required,
+                    default=prop_schema.get("default"),
                 )
             )
     # Handle array body (e.g. POST /batch)
@@ -161,6 +285,7 @@ def _extract_body(
                         name=name,
                         type=schema_to_type_string(prop_schema, spec),
                         required=name in required_set,
+                        default=prop_schema.get("default"),
                     )
                 )
 
@@ -204,4 +329,6 @@ def extract_method_definition(
         content_type=content_type,
         body_is_array=body.is_array,
         body_array_item_type=body.array_item_type,
+        body_variants=body.variants,
+        response_is_html=response_info.is_html,
     )

@@ -68,3 +68,4 @@ class RequestOptions:
     headers: dict[str, str] | None = None
     content_type: ContentType = "form"
     is_search: bool = False
+    is_html: bool = False

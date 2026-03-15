@@ -155,19 +155,21 @@ class HttpClient:
         except httpx.HTTPError as error:
             raise NetworkError(error) from error
 
-        parse_error: Exception | None = None
-        try:
-            body: JsonValue = response.json()
-        except Exception as e:
-            body = None
-            parse_error = e
-
         if not response.is_success:
+            parse_error: Exception | None = None
+            try:
+                body: JsonValue = response.json()
+            except Exception as e:
+                body = None
+                parse_error = e
             raise create_http_error(
                 response.status_code, body, response.headers, parse_error=parse_error
             )
 
-        return body
+        if options.is_html:
+            return response.text
+
+        return response.json()  # type: ignore[no-any-return]
 
     def close(self) -> None:
         self._client.close()

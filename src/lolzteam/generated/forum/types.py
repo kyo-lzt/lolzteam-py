@@ -733,19 +733,44 @@ class Resp_SystemInfo(TypedDict):
 # ─── OAuthApi Types ────────────────────────────────────────
 
 
-class _OAuthTokenBodyRequired(TypedDict):
-    grant_type: Literal["client_credentials", "authorization_code", "refresh_token", "password"]
+class OAuthTokenClientCredentialsBody(TypedDict):
+    grant_type: Literal["client_credentials"]
+    client_id: str
+    client_secret: str
+    scope: list[Literal["basic", "read", "post", "conversate", "market", "payment", "invoice"]]
+
+
+class OAuthTokenAuthorizationCodeBody(TypedDict):
+    grant_type: Literal["authorization_code"]
+    code: str
+    client_id: str
+    client_secret: str
+    redirect_uri: str
+    scope: list[Literal["basic", "read", "post", "conversate", "market", "payment", "invoice"]]
+
+
+class OAuthTokenRefreshTokenBody(TypedDict):
+    grant_type: Literal["refresh_token"]
+    refresh_token: str
     client_id: str
     client_secret: str
 
 
-class OAuthTokenBody(_OAuthTokenBodyRequired, total=False):
-    scope: list[Literal["basic", "read", "post", "conversate", "market", "payment", "invoice"]]
-    code: str
-    redirect_uri: str
-    refresh_token: str
+class OAuthTokenPasswordBody(TypedDict):
+    grant_type: Literal["password"]
     username: str
     password: str
+    client_id: str
+    client_secret: str
+    scope: list[Literal["basic", "read", "post", "conversate", "market", "payment", "invoice"]]
+
+
+OAuthTokenBody = (
+    OAuthTokenClientCredentialsBody
+    | OAuthTokenAuthorizationCodeBody
+    | OAuthTokenRefreshTokenBody
+    | OAuthTokenPasswordBody
+)
 
 
 class _OAuthTokenResponseRequired(TypedDict):
@@ -1410,7 +1435,7 @@ class ThreadsCreateBody(_ThreadsCreateBodyRequired, total=False):
     tags: list[str]
     hide_contacts: bool
     allow_ask_hidden_content: bool
-    reply_group: Literal[0, 2, 21, 22, 23, 60, 351]
+    reply_group: Literal[0, 2, 21, 22, 23, 60, 351]  # default: 2
     comment_ignore_group: bool
     dont_alert_followers: bool
     schedule_date: str
@@ -1420,6 +1445,11 @@ class ThreadsCreateBody(_ThreadsCreateBodyRequired, total=False):
     watch_thread_email: bool
 
 
+ThreadsCreateBody_DEFAULTS: dict[str, object] = {
+    "reply_group": 2,
+}
+
+
 class ThreadsCreateResponse(TypedDict):
     thread: Resp_ThreadModel
     system_info: Resp_SystemInfo
@@ -1427,7 +1457,7 @@ class ThreadsCreateResponse(TypedDict):
 
 class _ThreadsCreatecontestBodyRequired(TypedDict):
     post_body: str
-    contest_type: Literal["by_finish_date"]
+    contest_type: Literal["by_finish_date"]  # default: "by_finish_date"
     prize_type: Literal["money", "upgrades"]
     require_like_count: int
     require_total_like_count: int
@@ -1445,7 +1475,7 @@ class ThreadsCreatecontestBody(_ThreadsCreatecontestBodyRequired, total=False):
     prize_data_upgrade: Literal[1, 6, 12, 14, 17, 19, 20, 21, 22]
     secret_answer: str
     tags: list[str]
-    reply_group: Literal[0, 2, 21, 22, 23, 60, 351]
+    reply_group: Literal[0, 2, 21, 22, 23, 60, 351]  # default: 2
     comment_ignore_group: bool
     dont_alert_followers: bool
     hide_contacts: bool
@@ -1455,6 +1485,12 @@ class ThreadsCreatecontestBody(_ThreadsCreatecontestBodyRequired, total=False):
     watch_thread_state: bool
     watch_thread: bool
     watch_thread_email: bool
+
+
+ThreadsCreatecontestBody_DEFAULTS: dict[str, object] = {
+    "contest_type": "by_finish_date",
+    "reply_group": 2,
+}
 
 
 class ThreadsCreatecontestResponse(TypedDict):
@@ -1480,7 +1516,7 @@ class ThreadsClaimBody(_ThreadsClaimBodyRequired, total=False):
     tags: list[str]
     hide_contacts: bool
     allow_ask_hidden_content: bool
-    reply_group: Literal[0, 2, 21, 22, 23, 60, 351]
+    reply_group: Literal[0, 2, 21, 22, 23, 60, 351]  # default: 2
     comment_ignore_group: bool
     dont_alert_followers: bool
     schedule_date: str
@@ -1488,6 +1524,11 @@ class ThreadsClaimBody(_ThreadsClaimBodyRequired, total=False):
     watch_thread_state: bool
     watch_thread: bool
     watch_thread_email: bool
+
+
+ThreadsClaimBody_DEFAULTS: dict[str, object] = {
+    "reply_group": 2,
+}
 
 
 class ThreadsClaimResponse(TypedDict):
@@ -2457,7 +2498,101 @@ class UsersEditBody(TypedDict, total=False):
     short_link: str
     language_id: Literal[1, 2]
     gender: Literal["", "male", "female"]
-    timezone: str
+    timezone: Literal[
+        "Pacific/Midway",
+        "Pacific/Honolulu",
+        "Pacific/Marquesas",
+        "America/Anchorage",
+        "America/Los_Angeles",
+        "America/Santa_Isabel",
+        "America/Tijuana",
+        "America/Denver",
+        "America/Chihuahua",
+        "America/Phoenix",
+        "America/Chicago",
+        "America/Belize",
+        "America/Mexico_City",
+        "Pacific/Easter",
+        "America/New_York",
+        "America/Havana",
+        "America/Bogota",
+        "America/Caracas",
+        "America/Halifax",
+        "America/Goose_Bay",
+        "America/Asuncion",
+        "America/Santiago",
+        "America/Cuiaba",
+        "America/La_Paz",
+        "America/St_Johns",
+        "America/Argentina/Buenos_Aires",
+        "America/Argentina/San_Luis",
+        "America/Argentina/Mendoza",
+        "Atlantic/Stanley",
+        "America/Godthab",
+        "America/Montevideo",
+        "America/Sao_Paulo",
+        "America/Miquelon",
+        "America/Noronha",
+        "Atlantic/Cape_Verde",
+        "Atlantic/Azores",
+        "Europe/London",
+        "Africa/Casablanca",
+        "Atlantic/Reykjavik",
+        "Europe/Amsterdam",
+        "Africa/Algiers",
+        "Africa/Windhoek",
+        "Africa/Tunis",
+        "Europe/Athens",
+        "Africa/Johannesburg",
+        "Europe/Kaliningrad",
+        "Asia/Amman",
+        "Asia/Beirut",
+        "Africa/Cairo",
+        "Asia/Jerusalem",
+        "Asia/Gaza",
+        "Asia/Damascus",
+        "Europe/Moscow",
+        "Europe/Minsk",
+        "Africa/Nairobi",
+        "Asia/Tehran",
+        "Asia/Dubai",
+        "Asia/Yerevan",
+        "Asia/Baku",
+        "Indian/Mauritius",
+        "Asia/Kabul",
+        "Asia/Yekaterinburg",
+        "Asia/Tashkent",
+        "Asia/Kolkata",
+        "Asia/Kathmandu",
+        "Asia/Novosibirsk",
+        "Asia/Dhaka",
+        "Asia/Almaty",
+        "Asia/Rangoon",
+        "Asia/Krasnoyarsk",
+        "Asia/Bangkok",
+        "Asia/Irkutsk",
+        "Asia/Hong_Kong",
+        "Asia/Singapore",
+        "Australia/Perth",
+        "Asia/Yakutsk",
+        "Asia/Tokyo",
+        "Asia/Seoul",
+        "Australia/Adelaide",
+        "Australia/Darwin",
+        "Asia/Vladivostok",
+        "Asia/Magadan",
+        "Australia/Brisbane",
+        "Australia/Sydney",
+        "Pacific/Noumea",
+        "Pacific/Norfolk",
+        "Asia/Anadyr",
+        "Pacific/Auckland",
+        "Pacific/Fiji",
+        "Pacific/Chatham",
+        "Pacific/Tongatapu",
+        "Pacific/Apia",
+        "Pacific/Kiritimati",
+    ]
     receive_admin_email: bool
     activity_visible: bool
     show_dob_date: bool
@@ -2764,11 +2899,19 @@ class UsersFollowingsResponse(TypedDict):
 class UsersLikesParams(TypedDict, total=False):
     node_id: int
     like_type: Literal["like", "like2"]
-    type: Literal["gotten", "given"]
+    type: Literal["gotten", "given"]  # default: "gotten"
     page: int
-    content_type: Literal["post", "post_comment", "profile_post", "profile_post_comment"]
+    content_type: Literal[
+        "post", "post_comment", "profile_post", "profile_post_comment"
+    ]  # default: "post"
     search_user_id: int
     stats: bool
+
+
+UsersLikesParams_DEFAULTS: dict[str, object] = {
+    "type": "gotten",
+    "content_type": "post",
+}
 
 
 class UsersLikesResponseLikes1234567890(TypedDict):
@@ -3437,13 +3580,18 @@ class ConversationsListResponse(TypedDict):
 class ConversationsCreateBody(TypedDict, total=False):
     recipient_id: int
     recipients: list[str]
-    is_group: bool
+    is_group: bool  # default: False
     title: str
     open_invite: bool
     allow_edit_messages: bool
     allow_sticky_messages: bool
     allow_delete_own_messages: bool
     message_body: str
+
+
+ConversationsCreateBody_DEFAULTS: dict[str, object] = {
+    "is_group": False,
+}
 
 
 class ConversationsCreateResponse(TypedDict):
@@ -5219,9 +5367,17 @@ class FormsListResponse(TypedDict):
     system_info: Resp_SystemInfo
 
 
-class FormsCreateBody(TypedDict):
-    form_id: Literal[1, 3]
+class FormsCreateP2PTradeBody(TypedDict):
+    form_id: Literal[1]  # default: 1
     fields: dict[str, object]
+
+
+class FormsCreateComplaintBody(TypedDict):
+    form_id: Literal[3]  # default: 3
+    fields: dict[str, object]
+
+
+FormsCreateBody = FormsCreateP2PTradeBody | FormsCreateComplaintBody
 
 
 class FormsCreateResponseContentLinks(TypedDict):

@@ -31,13 +31,13 @@ class MethodDefinition:
     body_required: bool = False
     response_type: str = "object"
     response_schema: SchemaObject | None = None
-    content_type: str = "form"  # "form" or "multipart"
+    content_type: str = "form"  # "form", "json", or "multipart"
     body_is_array: bool = False
     body_array_item_type: str = "object"
 
 
 def _detect_content_type(operation: dict[str, object], spec: Spec) -> str:
-    """Detect whether the operation uses multipart or form-urlencoded."""
+    """Detect whether the operation uses multipart, json, or form-urlencoded."""
     request_body = operation.get("requestBody")
     if request_body is None:
         return "form"
@@ -45,8 +45,13 @@ def _detect_content_type(operation: dict[str, object], spec: Spec) -> str:
     if not isinstance(resolved, dict):
         return "form"
     content = resolved.get("content")
-    if isinstance(content, dict) and "multipart/form-data" in content:
+    if not isinstance(content, dict):
+        return "form"
+    has_form = "application/x-www-form-urlencoded" in content
+    if "multipart/form-data" in content and not has_form:
         return "multipart"
+    if "application/json" in content and not has_form:
+        return "json"
     return "form"
 
 

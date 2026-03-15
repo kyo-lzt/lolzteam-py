@@ -7,6 +7,8 @@ from lolzteam.runtime.async_http_client import AsyncHttpClient
 from lolzteam.runtime.http_client import HttpClient
 from lolzteam.runtime.types import (
     ClientConfig,
+    OnRetryCallback,
+    OnRetryCallbackAsync,
     ProxyConfig,
     RateLimitConfig,
     RequestOptions,
@@ -412,6 +414,7 @@ class ForumsApi:
                 method="POST",
                 path=f"/forums/{forum_id}/followers",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -448,6 +451,7 @@ class ForumsApi:
                 method="PUT",
                 path="/forums/feed/options",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -497,6 +501,7 @@ class AsyncForumsApi:
                 method="POST",
                 path=f"/forums/{forum_id}/followers",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -535,6 +540,7 @@ class AsyncForumsApi:
                 method="PUT",
                 path="/forums/feed/options",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -672,6 +678,7 @@ class ThreadsApi:
                 method="POST",
                 path="/threads",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -681,6 +688,7 @@ class ThreadsApi:
                 method="POST",
                 path="/contests",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -690,6 +698,7 @@ class ThreadsApi:
                 method="POST",
                 path="/claims",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -708,6 +717,7 @@ class ThreadsApi:
                 method="PUT",
                 path=f"/threads/{thread_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -719,6 +729,7 @@ class ThreadsApi:
                 method="DELETE",
                 path=f"/threads/{thread_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -728,6 +739,7 @@ class ThreadsApi:
                 method="POST",
                 path=f"/threads/{thread_id}/move",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -779,6 +791,7 @@ class ThreadsApi:
                 method="POST",
                 path=f"/threads/{thread_id}/followers",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -823,6 +836,7 @@ class ThreadsApi:
                 method="POST",
                 path=f"/threads/{thread_id}/poll/votes",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -872,6 +886,7 @@ class AsyncThreadsApi:
                 method="POST",
                 path="/threads",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -883,6 +898,7 @@ class AsyncThreadsApi:
                 method="POST",
                 path="/contests",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -892,6 +908,7 @@ class AsyncThreadsApi:
                 method="POST",
                 path="/claims",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -914,6 +931,7 @@ class AsyncThreadsApi:
                 method="PUT",
                 path=f"/threads/{thread_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -925,6 +943,7 @@ class AsyncThreadsApi:
                 method="DELETE",
                 path=f"/threads/{thread_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -934,6 +953,7 @@ class AsyncThreadsApi:
                 method="POST",
                 path=f"/threads/{thread_id}/move",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -985,6 +1005,7 @@ class AsyncThreadsApi:
                 method="POST",
                 path=f"/threads/{thread_id}/followers",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1031,6 +1052,7 @@ class AsyncThreadsApi:
                 method="POST",
                 path=f"/threads/{thread_id}/poll/votes",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1080,6 +1102,7 @@ class PostsApi:
                 method="POST",
                 path="/posts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1097,6 +1120,7 @@ class PostsApi:
                 method="PUT",
                 path=f"/posts/{post_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1106,6 +1130,7 @@ class PostsApi:
                 method="DELETE",
                 path=f"/posts/{post_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1148,6 +1173,7 @@ class PostsApi:
                 method="POST",
                 path=f"/posts/{post_id}/report",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1166,6 +1192,7 @@ class PostsApi:
                 method="POST",
                 path="/posts/comments",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1175,6 +1202,7 @@ class PostsApi:
                 method="PUT",
                 path="/posts/comments",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1184,6 +1212,7 @@ class PostsApi:
                 method="DELETE",
                 path="/posts/comments",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1193,6 +1222,7 @@ class PostsApi:
                 method="POST",
                 path="/posts/comments/report",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1216,6 +1246,7 @@ class AsyncPostsApi:
                 method="POST",
                 path="/posts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1233,6 +1264,7 @@ class AsyncPostsApi:
                 method="PUT",
                 path=f"/posts/{post_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1244,6 +1276,7 @@ class AsyncPostsApi:
                 method="DELETE",
                 path=f"/posts/{post_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1288,6 +1321,7 @@ class AsyncPostsApi:
                 method="POST",
                 path=f"/posts/{post_id}/report",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1308,6 +1342,7 @@ class AsyncPostsApi:
                 method="POST",
                 path="/posts/comments",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1317,6 +1352,7 @@ class AsyncPostsApi:
                 method="PUT",
                 path="/posts/comments",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1328,6 +1364,7 @@ class AsyncPostsApi:
                 method="DELETE",
                 path="/posts/comments",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1339,6 +1376,7 @@ class AsyncPostsApi:
                 method="POST",
                 path="/posts/comments/report",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1388,6 +1426,7 @@ class UsersApi:
                 method="PUT",
                 path=f"/users/{user_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1430,6 +1469,7 @@ class UsersApi:
                 method="POST",
                 path=f"/users/{user_id}/avatar/crop",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1461,6 +1501,7 @@ class UsersApi:
                 method="POST",
                 path=f"/users/{user_id}/background/crop",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1642,6 +1683,7 @@ class AsyncUsersApi:
                 method="PUT",
                 path=f"/users/{user_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1684,6 +1726,7 @@ class AsyncUsersApi:
                 method="POST",
                 path=f"/users/{user_id}/avatar/crop",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1715,6 +1758,7 @@ class AsyncUsersApi:
                 method="POST",
                 path=f"/users/{user_id}/background/crop",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1878,6 +1922,7 @@ class ProfilePostsApi:
                 method="PUT",
                 path=f"/profile-posts/{profile_post_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1908,6 +1953,7 @@ class ProfilePostsApi:
                 method="POST",
                 path=f"/profile-posts/{profile_post_id}/report",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1917,6 +1963,7 @@ class ProfilePostsApi:
                 method="POST",
                 path="/profile-posts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1979,6 +2026,7 @@ class ProfilePostsApi:
                 method="POST",
                 path="/profile-posts/comments",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1990,6 +2038,7 @@ class ProfilePostsApi:
                 method="PUT",
                 path="/profile-posts/comments",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2001,6 +2050,7 @@ class ProfilePostsApi:
                 method="DELETE",
                 path="/profile-posts/comments",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2022,6 +2072,7 @@ class ProfilePostsApi:
                 method="POST",
                 path=f"/profile-posts/comments/{comment_id}/report",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2057,6 +2108,7 @@ class AsyncProfilePostsApi:
                 method="PUT",
                 path=f"/profile-posts/{profile_post_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2087,6 +2139,7 @@ class AsyncProfilePostsApi:
                 method="POST",
                 path=f"/profile-posts/{profile_post_id}/report",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2096,6 +2149,7 @@ class AsyncProfilePostsApi:
                 method="POST",
                 path="/profile-posts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2158,6 +2212,7 @@ class AsyncProfilePostsApi:
                 method="POST",
                 path="/profile-posts/comments",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2169,6 +2224,7 @@ class AsyncProfilePostsApi:
                 method="PUT",
                 path="/profile-posts/comments",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2180,6 +2236,7 @@ class AsyncProfilePostsApi:
                 method="DELETE",
                 path="/profile-posts/comments",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2201,6 +2258,7 @@ class AsyncProfilePostsApi:
                 method="POST",
                 path=f"/profile-posts/comments/{comment_id}/report",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2224,6 +2282,7 @@ class ConversationsApi:
                 method="POST",
                 path="/conversations",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2233,6 +2292,7 @@ class ConversationsApi:
                 method="PUT",
                 path="/conversations",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2242,6 +2302,7 @@ class ConversationsApi:
                 method="DELETE",
                 path="/conversations",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2251,6 +2312,7 @@ class ConversationsApi:
                 method="POST",
                 path="/conversations/start",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2260,6 +2322,7 @@ class ConversationsApi:
                 method="POST",
                 path="/conversations/save",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2290,6 +2353,7 @@ class ConversationsApi:
                 method="POST",
                 path=f"/conversations/{conversation_id}/messages",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2299,6 +2363,7 @@ class ConversationsApi:
                 method="POST",
                 path="/conversations/search",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2318,6 +2383,7 @@ class ConversationsApi:
                 method="PUT",
                 path=f"/conversations/{conversation_id}/messages/{message_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2339,6 +2405,7 @@ class ConversationsApi:
                 method="POST",
                 path=f"/conversations/{conversation_id}/invite",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2350,6 +2417,7 @@ class ConversationsApi:
                 method="POST",
                 path=f"/conversations/{conversation_id}/kick",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2445,6 +2513,7 @@ class AsyncConversationsApi:
                 method="POST",
                 path="/conversations",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2454,6 +2523,7 @@ class AsyncConversationsApi:
                 method="PUT",
                 path="/conversations",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2463,6 +2533,7 @@ class AsyncConversationsApi:
                 method="DELETE",
                 path="/conversations",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2472,6 +2543,7 @@ class AsyncConversationsApi:
                 method="POST",
                 path="/conversations/start",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2481,6 +2553,7 @@ class AsyncConversationsApi:
                 method="POST",
                 path="/conversations/save",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2511,6 +2584,7 @@ class AsyncConversationsApi:
                 method="POST",
                 path=f"/conversations/{conversation_id}/messages",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2522,6 +2596,7 @@ class AsyncConversationsApi:
                 method="POST",
                 path="/conversations/search",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2541,6 +2616,7 @@ class AsyncConversationsApi:
                 method="PUT",
                 path=f"/conversations/{conversation_id}/messages/{message_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2562,6 +2638,7 @@ class AsyncConversationsApi:
                 method="POST",
                 path=f"/conversations/{conversation_id}/invite",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2573,6 +2650,7 @@ class AsyncConversationsApi:
                 method="POST",
                 path=f"/conversations/{conversation_id}/kick",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2672,6 +2750,7 @@ class NotificationsApi:
                 method="POST",
                 path="/notifications/read",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2705,6 +2784,7 @@ class AsyncNotificationsApi:
                 method="POST",
                 path="/notifications/read",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2799,6 +2879,7 @@ class SearchApi:
                 method="POST",
                 path="/search",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2808,6 +2889,7 @@ class SearchApi:
                 method="POST",
                 path="/search/threads",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2817,6 +2899,7 @@ class SearchApi:
                 method="POST",
                 path="/search/posts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2826,6 +2909,7 @@ class SearchApi:
                 method="POST",
                 path="/search/users",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2837,6 +2921,7 @@ class SearchApi:
                 method="POST",
                 path="/search/profile-posts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2846,17 +2931,18 @@ class SearchApi:
                 method="POST",
                 path="/search/tagged",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
     def results(
-        self, search_id: str | int, *, body: SearchResultsBody | None = None
+        self, search_id: str | int, *, params: SearchResultsBody | None = None
     ) -> SearchResultsResponse:
         return self._http.request(
             RequestOptions(
                 method="GET",
                 path=f"/search/{search_id}/results",
-                body=body,
+                query=params,
             )
         )  # type: ignore[return-value]
 
@@ -2871,6 +2957,7 @@ class AsyncSearchApi:
                 method="POST",
                 path="/search",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2880,6 +2967,7 @@ class AsyncSearchApi:
                 method="POST",
                 path="/search/threads",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2889,6 +2977,7 @@ class AsyncSearchApi:
                 method="POST",
                 path="/search/posts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2898,6 +2987,7 @@ class AsyncSearchApi:
                 method="POST",
                 path="/search/users",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2909,6 +2999,7 @@ class AsyncSearchApi:
                 method="POST",
                 path="/search/profile-posts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2918,17 +3009,18 @@ class AsyncSearchApi:
                 method="POST",
                 path="/search/tagged",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
     async def results(
-        self, search_id: str | int, *, body: SearchResultsBody | None = None
+        self, search_id: str | int, *, params: SearchResultsBody | None = None
     ) -> SearchResultsResponse:
         return await self._http.request(
             RequestOptions(
                 method="GET",
                 path=f"/search/{search_id}/results",
-                body=body,
+                query=params,
             )
         )  # type: ignore[return-value]
 
@@ -2943,6 +3035,7 @@ class BatchApi:
                 method="POST",
                 path="/batch",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2957,6 +3050,7 @@ class AsyncBatchApi:
                 method="POST",
                 path="/batch",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2989,6 +3083,7 @@ class ChatboxApi:
                 method="POST",
                 path="/chatbox/messages",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2998,6 +3093,7 @@ class ChatboxApi:
                 method="PUT",
                 path="/chatbox/messages",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -3007,6 +3103,7 @@ class ChatboxApi:
                 method="DELETE",
                 path="/chatbox/messages",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -3034,6 +3131,7 @@ class ChatboxApi:
                 method="POST",
                 path="/chatbox/messages/report",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -3062,6 +3160,7 @@ class ChatboxApi:
                 method="POST",
                 path="/chatbox/ignore",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -3071,6 +3170,7 @@ class ChatboxApi:
                 method="DELETE",
                 path="/chatbox/ignore",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -3103,6 +3203,7 @@ class AsyncChatboxApi:
                 method="POST",
                 path="/chatbox/messages",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -3112,6 +3213,7 @@ class AsyncChatboxApi:
                 method="PUT",
                 path="/chatbox/messages",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -3123,6 +3225,7 @@ class AsyncChatboxApi:
                 method="DELETE",
                 path="/chatbox/messages",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -3152,6 +3255,7 @@ class AsyncChatboxApi:
                 method="POST",
                 path="/chatbox/messages/report",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -3180,6 +3284,7 @@ class AsyncChatboxApi:
                 method="POST",
                 path="/chatbox/ignore",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -3189,6 +3294,7 @@ class AsyncChatboxApi:
                 method="DELETE",
                 path="/chatbox/ignore",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -3212,6 +3318,7 @@ class FormsApi:
                 method="POST",
                 path="/forms/save",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -3235,6 +3342,7 @@ class AsyncFormsApi:
                 method="POST",
                 path="/forms/save",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -3250,6 +3358,7 @@ class ForumClient:
         base_delay: float = 1.0,
         max_delay: float = 30.0,
         requests_per_minute: int = 300,
+        on_retry: OnRetryCallback | None = None,
     ) -> None:
         config = ClientConfig(
             token=token,
@@ -3257,6 +3366,7 @@ class ForumClient:
             proxy=ProxyConfig(url=proxy) if proxy else None,
             retry=RetryConfig(max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),
             rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),
+            on_retry=on_retry,
         )
         self._http = HttpClient(config)
         self.o_auth = OAuthApi(self._http)
@@ -3299,6 +3409,7 @@ class AsyncForumClient:
         base_delay: float = 1.0,
         max_delay: float = 30.0,
         requests_per_minute: int = 300,
+        on_retry: OnRetryCallbackAsync | None = None,
     ) -> None:
         config = ClientConfig(
             token=token,
@@ -3306,6 +3417,7 @@ class AsyncForumClient:
             proxy=ProxyConfig(url=proxy) if proxy else None,
             retry=RetryConfig(max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),
             rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),
+            on_retry_async=on_retry,
         )
         self._http = AsyncHttpClient(config)
         self.o_auth = AsyncOAuthApi(self._http)

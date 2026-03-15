@@ -6,11 +6,17 @@ import time
 from typing import TYPE_CHECKING, TypeVar
 
 from lolzteam.runtime.errors import RateLimitError, ServerError
+from lolzteam.runtime.types import RetryInfo
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable
 
-    from lolzteam.runtime.types import RetryConfig
+    from lolzteam.runtime.types import (
+        OnRetryCallback,
+        OnRetryCallbackAsync,
+        RequestOptions,
+        RetryConfig,
+    )
 
 _T = TypeVar("_T")
 
@@ -29,7 +35,12 @@ def compute_delay(attempt: int, config: RetryConfig, error: Exception) -> float:
     return min(exponential + jitter, config.max_delay)
 
 
-def with_retry(fn: Callable[[], _T], config: RetryConfig) -> _T:
+def with_retry(
+    fn: Callable[[], _T],
+    config: RetryConfig,
+    options: RequestOptions,
+    on_retry: OnRetryCallback | None = None,
+) -> _T:
     for attempt in range(config.max_retries + 1):
         try:
             return fn()
@@ -37,6 +48,14 @@ def with_retry(fn: Callable[[], _T], config: RetryConfig) -> _T:
             if not is_retryable(error) or attempt == config.max_retries:
                 raise
             delay = compute_delay(attempt, config, error)
+            if on_retry is not None:
+                on_retry(RetryInfo(
+                    attempt=attempt,
+                    delay=delay,
+                    error=error,
+                    method=options.method,
+                    path=options.path,
+                ))
             time.sleep(delay)
     msg = "unreachable: max_retries must be >= 0"
     raise RuntimeError(msg)
@@ -45,6 +64,8 @@ def with_retry(fn: Callable[[], _T], config: RetryConfig) -> _T:
 async def async_with_retry(
     fn: Callable[[], Awaitable[_T]],
     config: RetryConfig,
+    options: RequestOptions,
+    on_retry: OnRetryCallbackAsync | None = None,
 ) -> _T:
     for attempt in range(config.max_retries + 1):
         try:
@@ -53,6 +74,14 @@ async def async_with_retry(
             if not is_retryable(error) or attempt == config.max_retries:
                 raise
             delay = compute_delay(attempt, config, error)
+            if on_retry is not None:
+                await on_retry(RetryInfo(
+                    attempt=attempt,
+                    delay=delay,
+                    error=error,
+                    method=options.method,
+                    path=options.path,
+                ))
             await asyncio.sleep(delay)
     msg = "unreachable: max_retries must be >= 0"
     raise RuntimeError(msg)

@@ -12,6 +12,7 @@ class RateLimiter:
         self._refill_rate = requests_per_minute / 60.0  # tokens per second
         self._last_refill = time.monotonic()
         self._lock = threading.Lock()
+        self._async_lock = asyncio.Lock()
 
     def acquire(self) -> None:
         with self._lock:
@@ -28,14 +29,18 @@ class RateLimiter:
             self._tokens -= 1
 
     async def async_acquire(self) -> None:
-        self._refill()
-        if self._tokens >= 1:
-            self._tokens -= 1
-            return
-        wait = (1 - self._tokens) / self._refill_rate
+        async with self._async_lock:
+            self._refill()
+            if self._tokens >= 1:
+                self._tokens -= 1
+                return
+            wait = (1 - self._tokens) / self._refill_rate
+
         await asyncio.sleep(wait)
-        self._refill()
-        self._tokens -= 1
+
+        async with self._async_lock:
+            self._refill()
+            self._tokens -= 1
 
     def _refill(self) -> None:
         now = time.monotonic()

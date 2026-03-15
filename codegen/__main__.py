@@ -21,6 +21,8 @@ class ApiConfig:
     client_name: str
     default_base_url: str
     default_rate_limit: int
+    search_groups: frozenset[str] = frozenset()
+    default_search_rate_limit: int | None = None
 
 
 APIS = [
@@ -37,6 +39,8 @@ APIS = [
         client_name="MarketClient",
         default_base_url="https://prod-api.lzt.market",
         default_rate_limit=120,
+        search_groups=frozenset({"category"}),
+        default_search_rate_limit=20,
     ),
 ]
 
@@ -65,6 +69,8 @@ def generate_api(config: ApiConfig) -> None:
         config.client_name,
         config.default_base_url,
         config.default_rate_limit,
+        search_groups=config.search_groups,
+        default_search_rate_limit=config.default_search_rate_limit,
     )
     (config.output_dir / "__init__.py").write_text(init_content, encoding="utf-8")
     print("  __init__.py")

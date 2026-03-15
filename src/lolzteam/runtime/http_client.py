@@ -15,9 +15,6 @@ if TYPE_CHECKING:
 
     from lolzteam.runtime.types import ClientConfig, JsonValue, RequestOptions
 
-DEFAULT_BASE_URL = "https://api.zelenka.guru"
-
-
 def _serialize_value(key: str, value: object) -> list[tuple[str, str]]:
     """Serialize a single key-value pair into form-encoded pairs."""
     if value is None:
@@ -81,12 +78,19 @@ def _split_multipart_body(
 class HttpClient:
     def __init__(self, config: ClientConfig) -> None:
         self._token = config.token
-        self._base_url = (config.base_url or DEFAULT_BASE_URL).rstrip("/")
+        if not config.base_url:
+            raise ConfigError("base_url is required")
+        self._base_url = config.base_url.rstrip("/")
         self._retry_config = config.retry
+        self._on_retry = config.on_retry
 
         self._rate_limiter: RateLimiter | None = None
         if config.rate_limit is not None:
             self._rate_limiter = RateLimiter(config.rate_limit.requests_per_minute)
+
+        self._search_rate_limiter: RateLimiter | None = None
+        if config.search_rate_limit is not None:
+            self._search_rate_limiter = RateLimiter(config.search_rate_limit.requests_per_minute)
 
         proxy: str | None = None
         if config.proxy is not None:
@@ -102,7 +106,11 @@ class HttpClient:
     def request(self, options: RequestOptions) -> JsonValue:
         if self._rate_limiter is not None:
             self._rate_limiter.acquire()
-        return with_retry(lambda: self._execute(options), self._retry_config)
+        if options.is_search and self._search_rate_limiter is not None:
+            self._search_rate_limiter.acquire()
+        return with_retry(
+            lambda: self._execute(options), self._retry_config, options, self._on_retry,
+        )
 
     def _execute(self, options: RequestOptions) -> JsonValue:
         url = f"{self._base_url}{options.path}"
@@ -116,10 +124,13 @@ class HttpClient:
         content: str | None = None
         data: dict[str, str] | None = None
         files: dict[str, tuple[str, bytes, str]] | None = None
+        json_body: dict[str, object] | None = None
 
         if options.body is not None and options.method != "GET":
             if options.content_type == "multipart":
                 data, files = _split_multipart_body(options.body)
+            elif options.content_type == "json":
+                json_body = options.body
             else:
                 headers["Content-Type"] = "application/x-www-form-urlencoded"
                 content = _encode_form_body(options.body)
@@ -132,6 +143,7 @@ class HttpClient:
                 content=content,
                 data=data,
                 files=files,
+                json=json_body,
             )
         except httpx.HTTPError as error:
             raise NetworkError(error) from error

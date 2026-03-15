@@ -168,7 +168,7 @@ def _build_path_expression(path: str) -> str:
     return 'f"' + path + '"'
 
 
-def _emit_sync_method(group: str, method: MethodDefinition) -> str:
+def _emit_sync_method(group: str, method: MethodDefinition, *, is_search: bool = False) -> str:
     """Emit a single sync method."""
     lines: list[str] = []
     response_name = f"{build_type_name(group, method.method_name)}Response"
@@ -186,6 +186,13 @@ def _emit_sync_method(group: str, method: MethodDefinition) -> str:
     query_type_name = f"{build_type_name(group, method.method_name)}Params"
     has_query_type = len(method.params.query_params) > 0
 
+    # GET requests can't have a body — promote body fields to query params
+    get_body_as_query = method.http_method == "GET" and has_body_type
+    if get_body_as_query:
+        has_body_type = False
+        has_query_type = True
+        query_type_name = body_type_name
+
     if has_body_type or has_query_type:
         args.append("*")
 
@@ -200,7 +207,8 @@ def _emit_sync_method(group: str, method: MethodDefinition) -> str:
 
     has_required_query = any(p.required for p in method.params.query_params)
     if has_query_type:
-        if has_required_query:
+        query_required = has_required_query or (get_body_as_query and body_effectively_required)
+        if query_required:
             args.append(f"params: {query_type_name}")
         else:
             args.append(f"params: {query_type_name} | None = None")
@@ -217,15 +225,17 @@ def _emit_sync_method(group: str, method: MethodDefinition) -> str:
         lines.append("            query=params,")
     if has_body_type:
         lines.append("            body=body,")
-    if method.content_type != "form":
+    if method.content_type != "form" and not get_body_as_query:
         lines.append(f'            content_type="{method.content_type}",')
+    if is_search:
+        lines.append("            is_search=True,")
 
     lines.append("        ))  # type: ignore[return-value]")
 
     return "\n".join(lines)
 
 
-def _emit_async_method(group: str, method: MethodDefinition) -> str:
+def _emit_async_method(group: str, method: MethodDefinition, *, is_search: bool = False) -> str:
     """Emit a single async method."""
     lines: list[str] = []
     response_name = f"{build_type_name(group, method.method_name)}Response"
@@ -239,6 +249,13 @@ def _emit_async_method(group: str, method: MethodDefinition) -> str:
     has_body_type = method.has_body and (len(method.body_properties) > 0 or method.body_is_array)
     query_type_name = f"{build_type_name(group, method.method_name)}Params"
     has_query_type = len(method.params.query_params) > 0
+
+    # GET requests can't have a body — promote body fields to query params
+    get_body_as_query = method.http_method == "GET" and has_body_type
+    if get_body_as_query:
+        has_body_type = False
+        has_query_type = True
+        query_type_name = body_type_name
 
     if has_body_type or has_query_type:
         args.append("*")
@@ -254,7 +271,8 @@ def _emit_async_method(group: str, method: MethodDefinition) -> str:
 
     has_required_query = any(p.required for p in method.params.query_params)
     if has_query_type:
-        if has_required_query:
+        query_required = has_required_query or (get_body_as_query and body_effectively_required)
+        if query_required:
             args.append(f"params: {query_type_name}")
         else:
             args.append(f"params: {query_type_name} | None = None")
@@ -271,15 +289,17 @@ def _emit_async_method(group: str, method: MethodDefinition) -> str:
         lines.append("            query=params,")
     if has_body_type:
         lines.append("            body=body,")
-    if method.content_type != "form":
+    if method.content_type != "form" and not get_body_as_query:
         lines.append(f'            content_type="{method.content_type}",')
+    if is_search:
+        lines.append("            is_search=True,")
 
     lines.append("        ))  # type: ignore[return-value]")
 
     return "\n".join(lines)
 
 
-def _emit_group_classes(group: ParsedGroup) -> str:
+def _emit_group_classes(group: ParsedGroup, *, is_search: bool = False) -> str:
     """Emit sync + async classes for a single group (no file header/imports)."""
     class_name = group_to_class_name(group.group_name)
     async_class_name = f"Async{class_name}"
@@ -292,7 +312,7 @@ def _emit_group_classes(group: ParsedGroup) -> str:
 
     for method in group.methods:
         lines.append("")
-        lines.append(_emit_sync_method(group.group_name, method))
+        lines.append(_emit_sync_method(group.group_name, method, is_search=is_search))
 
     # Async class
     lines.append("")
@@ -303,7 +323,7 @@ def _emit_group_classes(group: ParsedGroup) -> str:
 
     for method in group.methods:
         lines.append("")
-        lines.append(_emit_async_method(group.group_name, method))
+        lines.append(_emit_async_method(group.group_name, method, is_search=is_search))
 
     return "\n".join(lines)
 
@@ -316,6 +336,9 @@ def emit_combined_file(
     client_name: str,
     default_base_url: str,
     default_rate_limit: int,
+    *,
+    search_groups: frozenset[str] = frozenset(),
+    default_search_rate_limit: int | None = None,
 ) -> str:
     """Generate __init__.py with all group classes + sync/async client classes."""
     async_client_name = f"Async{client_name}"
@@ -352,6 +375,8 @@ def emit_combined_file(
     lines.append("from lolzteam.runtime.http_client import HttpClient")
     lines.append("from lolzteam.runtime.types import (")
     lines.append("    ClientConfig,")
+    lines.append("    OnRetryCallback,")
+    lines.append("    OnRetryCallbackAsync,")
     lines.append("    ProxyConfig,")
     lines.append("    RateLimitConfig,")
     lines.append("    RequestOptions,")
@@ -372,7 +397,9 @@ def emit_combined_file(
     for group in groups:
         lines.append("")
         lines.append("")
-        lines.append(_emit_group_classes(group))
+        lines.append(_emit_group_classes(
+            group, is_search=group.group_name in search_groups,
+        ))
 
     # Sync client
     lines.append("")
@@ -388,6 +415,9 @@ def emit_combined_file(
     lines.append("        base_delay: float = 1.0,")
     lines.append("        max_delay: float = 30.0,")
     lines.append(f"        requests_per_minute: int = {default_rate_limit},")
+    if default_search_rate_limit is not None:
+        lines.append(f"        search_requests_per_minute: int = {default_search_rate_limit},")
+    lines.append("        on_retry: OnRetryCallback | None = None,")
     lines.append("    ) -> None:")
     lines.append("        config = ClientConfig(")
     lines.append("            token=token,")
@@ -398,6 +428,12 @@ def emit_combined_file(
         "max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),"
     )
     lines.append("            rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),")
+    if default_search_rate_limit is not None:
+        lines.append(
+            "            search_rate_limit=RateLimitConfig("
+            "requests_per_minute=search_requests_per_minute),"
+        )
+    lines.append("            on_retry=on_retry,")
     lines.append("        )")
     lines.append("        self._http = HttpClient(config)")
 
@@ -430,6 +466,9 @@ def emit_combined_file(
     lines.append("        base_delay: float = 1.0,")
     lines.append("        max_delay: float = 30.0,")
     lines.append(f"        requests_per_minute: int = {default_rate_limit},")
+    if default_search_rate_limit is not None:
+        lines.append(f"        search_requests_per_minute: int = {default_search_rate_limit},")
+    lines.append("        on_retry: OnRetryCallbackAsync | None = None,")
     lines.append("    ) -> None:")
     lines.append("        config = ClientConfig(")
     lines.append("            token=token,")
@@ -440,6 +479,12 @@ def emit_combined_file(
         "max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),"
     )
     lines.append("            rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),")
+    if default_search_rate_limit is not None:
+        lines.append(
+            "            search_rate_limit=RateLimitConfig("
+            "requests_per_minute=search_requests_per_minute),"
+        )
+    lines.append("            on_retry_async=on_retry,")
     lines.append("        )")
     lines.append("        self._http = AsyncHttpClient(config)")
 

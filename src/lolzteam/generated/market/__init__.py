@@ -7,6 +7,8 @@ from lolzteam.runtime.async_http_client import AsyncHttpClient
 from lolzteam.runtime.http_client import HttpClient
 from lolzteam.runtime.types import (
     ClientConfig,
+    OnRetryCallback,
+    OnRetryCallbackAsync,
     ProxyConfig,
     RateLimitConfig,
     RequestOptions,
@@ -228,6 +230,7 @@ class CategoryApi:
                 method="GET",
                 path="/",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -237,6 +240,7 @@ class CategoryApi:
                 method="GET",
                 path="/steam",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -246,6 +250,7 @@ class CategoryApi:
                 method="GET",
                 path="/fortnite",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -255,6 +260,7 @@ class CategoryApi:
                 method="GET",
                 path="/mihoyo",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -264,6 +270,7 @@ class CategoryApi:
                 method="GET",
                 path="/riot",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -273,6 +280,7 @@ class CategoryApi:
                 method="GET",
                 path="/telegram",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -284,6 +292,7 @@ class CategoryApi:
                 method="GET",
                 path="/supercell",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -293,6 +302,7 @@ class CategoryApi:
                 method="GET",
                 path="/ea",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -302,6 +312,7 @@ class CategoryApi:
                 method="GET",
                 path="/world-of-tanks",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -311,6 +322,7 @@ class CategoryApi:
                 method="GET",
                 path="/wot-blitz",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -320,6 +332,7 @@ class CategoryApi:
                 method="GET",
                 path="/gifts",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -331,6 +344,7 @@ class CategoryApi:
                 method="GET",
                 path="/epicgames",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -342,6 +356,7 @@ class CategoryApi:
                 method="GET",
                 path="/escape-from-tarkov",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -353,6 +368,7 @@ class CategoryApi:
                 method="GET",
                 path="/socialclub",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -362,6 +378,7 @@ class CategoryApi:
                 method="GET",
                 path="/uplay",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -371,6 +388,7 @@ class CategoryApi:
                 method="GET",
                 path="/discord",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -380,6 +398,7 @@ class CategoryApi:
                 method="GET",
                 path="/tiktok",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -391,6 +410,7 @@ class CategoryApi:
                 method="GET",
                 path="/instagram",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -402,6 +422,7 @@ class CategoryApi:
                 method="GET",
                 path="/battlenet",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -411,6 +432,7 @@ class CategoryApi:
                 method="GET",
                 path="/chatgpt",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -420,6 +442,7 @@ class CategoryApi:
                 method="GET",
                 path="/vpn",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -429,6 +452,7 @@ class CategoryApi:
                 method="GET",
                 path="/roblox",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -438,6 +462,7 @@ class CategoryApi:
                 method="GET",
                 path="/warface",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -449,6 +474,7 @@ class CategoryApi:
                 method="GET",
                 path="/minecraft",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -458,6 +484,7 @@ class CategoryApi:
                 method="GET",
                 path="/hytale",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -467,6 +494,7 @@ class CategoryApi:
                 method="GET",
                 path="/category",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -503,6 +531,7 @@ class CategoryApi:
             RequestOptions(
                 method="GET",
                 path=f"/{categoryName}/params",
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -539,6 +568,7 @@ class CategoryApi:
             RequestOptions(
                 method="GET",
                 path=f"/{categoryName}/games",
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -553,6 +583,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -562,6 +593,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/steam",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -573,6 +605,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/fortnite",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -582,6 +615,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/mihoyo",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -591,6 +625,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/riot",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -602,6 +637,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/telegram",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -613,6 +649,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/supercell",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -622,6 +659,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/ea",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -631,6 +669,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/world-of-tanks",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -642,6 +681,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/wot-blitz",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -651,6 +691,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/gifts",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -662,6 +703,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/epicgames",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -673,6 +715,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/escape-from-tarkov",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -684,6 +727,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/socialclub",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -693,6 +737,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/uplay",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -704,6 +749,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/discord",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -713,6 +759,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/tiktok",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -724,6 +771,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/instagram",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -735,6 +783,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/battlenet",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -746,6 +795,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/chatgpt",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -755,6 +805,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/vpn",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -764,6 +815,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/roblox",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -775,6 +827,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/warface",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -786,6 +839,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/minecraft",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -795,6 +849,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/hytale",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -804,6 +859,7 @@ class AsyncCategoryApi:
                 method="GET",
                 path="/category",
                 query=params,
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -840,6 +896,7 @@ class AsyncCategoryApi:
             RequestOptions(
                 method="GET",
                 path=f"/{categoryName}/params",
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -876,6 +933,7 @@ class AsyncCategoryApi:
             RequestOptions(
                 method="GET",
                 path=f"/{categoryName}/games",
+                is_search=True,
             )
         )  # type: ignore[return-value]
 
@@ -1023,6 +1081,7 @@ class ManagingApi:
                 method="DELETE",
                 path=f"/{item_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1032,6 +1091,7 @@ class ManagingApi:
                 method="POST",
                 path="/claims",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1041,6 +1101,7 @@ class ManagingApi:
                 method="POST",
                 path="/bulk/items",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1081,6 +1142,7 @@ class ManagingApi:
                 method="PUT",
                 path=f"/{item_id}/edit",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1106,6 +1168,7 @@ class ManagingApi:
                 method="POST",
                 path=f"/{item_id}/note-save",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1117,6 +1180,7 @@ class ManagingApi:
                 method="POST",
                 path=f"/{item_id}/update-inventory",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1134,6 +1198,7 @@ class ManagingApi:
                 method="POST",
                 path=f"/{item_id}/auto-bump",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1229,6 +1294,7 @@ class ManagingApi:
                 method="POST",
                 path=f"/{item_id}/confirm-sda",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1264,6 +1330,7 @@ class ManagingApi:
                 method="POST",
                 path=f"/{item_id}/decline-video-recording",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1283,6 +1350,7 @@ class ManagingApi:
                 method="POST",
                 path=f"/{item_id}/change-password",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1300,6 +1368,7 @@ class ManagingApi:
                 method="POST",
                 path=f"/{item_id}/tag",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1309,6 +1378,7 @@ class ManagingApi:
                 method="DELETE",
                 path=f"/{item_id}/tag",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1318,6 +1388,7 @@ class ManagingApi:
                 method="POST",
                 path=f"/{item_id}/public-tag",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1329,6 +1400,7 @@ class ManagingApi:
                 method="DELETE",
                 path=f"/{item_id}/public-tag",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1370,6 +1442,7 @@ class ManagingApi:
                 method="POST",
                 path=f"/{item_id}/change-owner",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1395,6 +1468,7 @@ class AsyncManagingApi:
                 method="DELETE",
                 path=f"/{item_id}",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1404,6 +1478,7 @@ class AsyncManagingApi:
                 method="POST",
                 path="/claims",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1413,6 +1488,7 @@ class AsyncManagingApi:
                 method="POST",
                 path="/bulk/items",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1455,6 +1531,7 @@ class AsyncManagingApi:
                 method="PUT",
                 path=f"/{item_id}/edit",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1482,6 +1559,7 @@ class AsyncManagingApi:
                 method="POST",
                 path=f"/{item_id}/note-save",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1493,6 +1571,7 @@ class AsyncManagingApi:
                 method="POST",
                 path=f"/{item_id}/update-inventory",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1512,6 +1591,7 @@ class AsyncManagingApi:
                 method="POST",
                 path=f"/{item_id}/auto-bump",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1607,6 +1687,7 @@ class AsyncManagingApi:
                 method="POST",
                 path=f"/{item_id}/confirm-sda",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1642,6 +1723,7 @@ class AsyncManagingApi:
                 method="POST",
                 path=f"/{item_id}/decline-video-recording",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1661,6 +1743,7 @@ class AsyncManagingApi:
                 method="POST",
                 path=f"/{item_id}/change-password",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1678,6 +1761,7 @@ class AsyncManagingApi:
                 method="POST",
                 path=f"/{item_id}/tag",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1687,6 +1771,7 @@ class AsyncManagingApi:
                 method="DELETE",
                 path=f"/{item_id}/tag",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1698,6 +1783,7 @@ class AsyncManagingApi:
                 method="POST",
                 path=f"/{item_id}/public-tag",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1709,6 +1795,7 @@ class AsyncManagingApi:
                 method="DELETE",
                 path=f"/{item_id}/public-tag",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1752,6 +1839,7 @@ class AsyncManagingApi:
                 method="POST",
                 path=f"/{item_id}/change-owner",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1784,6 +1872,7 @@ class ProfileApi:
                 method="PUT",
                 path="/me",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1816,6 +1905,7 @@ class AsyncProfileApi:
                 method="PUT",
                 path="/me",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1839,6 +1929,7 @@ class CartApi:
                 method="POST",
                 path="/cart",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1848,6 +1939,7 @@ class CartApi:
                 method="DELETE",
                 path="/cart",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1871,6 +1963,7 @@ class AsyncCartApi:
                 method="POST",
                 path="/cart",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1880,6 +1973,7 @@ class AsyncCartApi:
                 method="DELETE",
                 path="/cart",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1896,6 +1990,7 @@ class PurchasingApi:
                 method="POST",
                 path=f"/{item_id}/fast-buy",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1915,6 +2010,7 @@ class PurchasingApi:
                 method="POST",
                 path=f"/{item_id}/confirm-buy",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1926,6 +2022,7 @@ class PurchasingApi:
                 method="POST",
                 path=f"/{item_id}/discount",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1950,6 +2047,7 @@ class AsyncPurchasingApi:
                 method="POST",
                 path=f"/{item_id}/fast-buy",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1969,6 +2067,7 @@ class AsyncPurchasingApi:
                 method="POST",
                 path=f"/{item_id}/confirm-buy",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -1980,6 +2079,7 @@ class AsyncPurchasingApi:
                 method="POST",
                 path=f"/{item_id}/discount",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2010,6 +2110,7 @@ class CustomDiscountsApi:
                 method="POST",
                 path="/custom-discounts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2019,6 +2120,7 @@ class CustomDiscountsApi:
                 method="PUT",
                 path="/custom-discounts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2028,6 +2130,7 @@ class CustomDiscountsApi:
                 method="DELETE",
                 path="/custom-discounts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2050,6 +2153,7 @@ class AsyncCustomDiscountsApi:
                 method="POST",
                 path="/custom-discounts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2059,6 +2163,7 @@ class AsyncCustomDiscountsApi:
                 method="PUT",
                 path="/custom-discounts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2068,6 +2173,7 @@ class AsyncCustomDiscountsApi:
                 method="DELETE",
                 path="/custom-discounts",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2082,6 +2188,7 @@ class PublishingApi:
                 method="POST",
                 path="/item/fast-sell",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2091,6 +2198,7 @@ class PublishingApi:
                 method="POST",
                 path="/item/add",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2102,6 +2210,7 @@ class PublishingApi:
                 method="POST",
                 path=f"/{item_id}/goods/check",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2111,6 +2220,7 @@ class PublishingApi:
                 method="POST",
                 path=f"/{item_id}/external-account",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2125,6 +2235,7 @@ class AsyncPublishingApi:
                 method="POST",
                 path="/item/fast-sell",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2134,6 +2245,7 @@ class AsyncPublishingApi:
                 method="POST",
                 path="/item/add",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2145,6 +2257,7 @@ class AsyncPublishingApi:
                 method="POST",
                 path=f"/{item_id}/goods/check",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2156,6 +2269,7 @@ class AsyncPublishingApi:
                 method="POST",
                 path=f"/{item_id}/external-account",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2181,6 +2295,7 @@ class PaymentsApi:
                 method="POST",
                 path="/invoice",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2219,6 +2334,7 @@ class PaymentsApi:
                 method="POST",
                 path="/balance/exchange",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2228,6 +2344,7 @@ class PaymentsApi:
                 method="POST",
                 path="/balance/transfer",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2246,6 +2363,7 @@ class PaymentsApi:
                 method="POST",
                 path="/balance/transfer/cancel",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2272,6 +2390,7 @@ class PaymentsApi:
                 method="POST",
                 path="/balance/payout",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2299,6 +2418,7 @@ class AsyncPaymentsApi:
                 method="POST",
                 path="/invoice",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2337,6 +2457,7 @@ class AsyncPaymentsApi:
                 method="POST",
                 path="/balance/exchange",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2346,6 +2467,7 @@ class AsyncPaymentsApi:
                 method="POST",
                 path="/balance/transfer",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2364,6 +2486,7 @@ class AsyncPaymentsApi:
                 method="POST",
                 path="/balance/transfer/cancel",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2392,6 +2515,7 @@ class AsyncPaymentsApi:
                 method="POST",
                 path="/balance/payout",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2414,6 +2538,7 @@ class AutoPaymentsApi:
                 method="POST",
                 path="/auto-payment",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2423,6 +2548,7 @@ class AutoPaymentsApi:
                 method="DELETE",
                 path="/auto-payment",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2445,6 +2571,7 @@ class AsyncAutoPaymentsApi:
                 method="POST",
                 path="/auto-payment",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2454,6 +2581,7 @@ class AsyncAutoPaymentsApi:
                 method="DELETE",
                 path="/auto-payment",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2476,6 +2604,7 @@ class ProxyApi:
                 method="POST",
                 path="/proxy",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2485,6 +2614,7 @@ class ProxyApi:
                 method="DELETE",
                 path="/proxy",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2507,6 +2637,7 @@ class AsyncProxyApi:
                 method="POST",
                 path="/proxy",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2516,6 +2647,7 @@ class AsyncProxyApi:
                 method="DELETE",
                 path="/proxy",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2530,6 +2662,7 @@ class ImapApi:
                 method="POST",
                 path="/imap",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2539,6 +2672,7 @@ class ImapApi:
                 method="DELETE",
                 path="/imap",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2553,6 +2687,7 @@ class AsyncImapApi:
                 method="POST",
                 path="/imap",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2562,6 +2697,7 @@ class AsyncImapApi:
                 method="DELETE",
                 path="/imap",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2576,6 +2712,7 @@ class BatchApi:
                 method="POST",
                 path="/batch",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2590,6 +2727,7 @@ class AsyncBatchApi:
                 method="POST",
                 path="/batch",
                 body=body,
+                content_type="json",
             )
         )  # type: ignore[return-value]
 
@@ -2605,6 +2743,8 @@ class MarketClient:
         base_delay: float = 1.0,
         max_delay: float = 30.0,
         requests_per_minute: int = 120,
+        search_requests_per_minute: int = 20,
+        on_retry: OnRetryCallback | None = None,
     ) -> None:
         config = ClientConfig(
             token=token,
@@ -2612,6 +2752,8 @@ class MarketClient:
             proxy=ProxyConfig(url=proxy) if proxy else None,
             retry=RetryConfig(max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),
             rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),
+            search_rate_limit=RateLimitConfig(requests_per_minute=search_requests_per_minute),
+            on_retry=on_retry,
         )
         self._http = HttpClient(config)
         self.category = CategoryApi(self._http)
@@ -2649,6 +2791,8 @@ class AsyncMarketClient:
         base_delay: float = 1.0,
         max_delay: float = 30.0,
         requests_per_minute: int = 120,
+        search_requests_per_minute: int = 20,
+        on_retry: OnRetryCallbackAsync | None = None,
     ) -> None:
         config = ClientConfig(
             token=token,
@@ -2656,6 +2800,8 @@ class AsyncMarketClient:
             proxy=ProxyConfig(url=proxy) if proxy else None,
             retry=RetryConfig(max_retries=max_retries, base_delay=base_delay, max_delay=max_delay),
             rate_limit=RateLimitConfig(requests_per_minute=requests_per_minute),
+            search_rate_limit=RateLimitConfig(requests_per_minute=search_requests_per_minute),
+            on_retry_async=on_retry,
         )
         self._http = AsyncHttpClient(config)
         self.category = AsyncCategoryApi(self._http)

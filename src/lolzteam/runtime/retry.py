@@ -66,6 +66,8 @@ def with_retry(
                 )
             time.sleep(delay)
 
+    raise AssertionError("unreachable")
+
 
 async def async_with_retry(
     fn: Callable[[], Awaitable[_T]],
@@ -95,3 +97,5 @@ async def async_with_retry(
                     )
                 )
             await asyncio.sleep(delay)
+
+    raise AssertionError("unreachable")

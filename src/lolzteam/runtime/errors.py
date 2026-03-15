@@ -36,7 +36,11 @@ class RateLimitError(HttpError):
 
 class AuthError(HttpError):
     def __init__(
-        self, status: int, body: object, headers: httpx.Headers, parse_error: Exception | None = None
+        self,
+        status: int,
+        body: object,
+        headers: httpx.Headers,
+        parse_error: Exception | None = None,
     ) -> None:
         super().__init__(status, body, headers, parse_error=parse_error)
 
@@ -50,7 +54,11 @@ class NotFoundError(HttpError):
 
 class ServerError(HttpError):
     def __init__(
-        self, status: int, body: object, headers: httpx.Headers, parse_error: Exception | None = None
+        self,
+        status: int,
+        body: object,
+        headers: httpx.Headers,
+        parse_error: Exception | None = None,
     ) -> None:
         super().__init__(status, body, headers, parse_error=parse_error)
 

@@ -163,7 +163,9 @@ class AsyncHttpClient:
             parse_error = e
 
         if not response.is_success:
-            raise create_http_error(response.status_code, body, response.headers, parse_error=parse_error)
+            raise create_http_error(
+                response.status_code, body, response.headers, parse_error=parse_error
+            )
 
         return body
 

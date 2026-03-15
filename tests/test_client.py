@@ -218,9 +218,7 @@ class TestForumClient:
     @patch("lolzteam.runtime.http_client.httpx.Client")
     def test_threads_get_path_param_substitution(self, mock_cls: MagicMock) -> None:
         mock_http = MagicMock()
-        mock_http.request.return_value = _mock_response(
-            json_data={"thread": {"thread_id": 123}}
-        )
+        mock_http.request.return_value = _mock_response(json_data={"thread": {"thread_id": 123}})
         mock_cls.return_value = mock_http
 
         client = ForumClient(token="t", max_retries=0)

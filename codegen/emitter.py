@@ -348,7 +348,7 @@ def _collect_referenced_schema_names(
         for method in group.methods:
             for param in method.params.path_params:
                 for name in component_schema_names:
-                    if re.search(r'(?<!\w)' + re.escape(name) + r'(?!\w)', param.type):
+                    if re.search(r"(?<!\w)" + re.escape(name) + r"(?!\w)", param.type):
                         found.add(name)
     return sorted(found)
 

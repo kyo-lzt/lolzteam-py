@@ -12,6 +12,7 @@ from lolzteam.runtime.errors import (
     NetworkError,
     NotFoundError,
     RateLimitError,
+    RetryExhaustedError,
     ServerError,
 )
 
@@ -133,6 +134,21 @@ class TestForumClient:
         client.close()
 
     @patch("lolzteam.runtime.http_client.httpx.Client")
+    def test_error_403_raises_auth_error(self, mock_cls: MagicMock) -> None:
+        mock_http = MagicMock()
+        mock_http.request.return_value = _mock_response(
+            status_code=403, json_data={"error": "forbidden"}
+        )
+        mock_cls.return_value = mock_http
+
+        client = ForumClient(token="t", max_retries=0)
+        client._http._client = mock_http
+        with pytest.raises(AuthError) as exc_info:
+            client.threads.list()
+        assert exc_info.value.status == 403
+        client.close()
+
+    @patch("lolzteam.runtime.http_client.httpx.Client")
     def test_error_404_raises_not_found_error(self, mock_cls: MagicMock) -> None:
         mock_http = MagicMock()
         mock_http.request.return_value = _mock_response(status_code=404)
@@ -198,6 +214,110 @@ class TestForumClient:
             client = ForumClient(token="t", requests_per_minute=100)
             assert client._http._rate_limiter is not None
             client.close()
+
+    @patch("lolzteam.runtime.http_client.httpx.Client")
+    def test_threads_get_path_param_substitution(self, mock_cls: MagicMock) -> None:
+        mock_http = MagicMock()
+        mock_http.request.return_value = _mock_response(
+            json_data={"thread": {"thread_id": 123}}
+        )
+        mock_cls.return_value = mock_http
+
+        client = ForumClient(token="t", max_retries=0)
+        client._http._client = mock_http
+        result = client.threads.get(123)
+        assert result == {"thread": {"thread_id": 123}}
+        call_kwargs = mock_http.request.call_args
+        assert "/threads/123" in call_kwargs.kwargs["url"]
+        client.close()
+
+    @patch("lolzteam.runtime.http_client.httpx.Client")
+    def test_threads_list_query_params(self, mock_cls: MagicMock) -> None:
+        mock_http = MagicMock()
+        mock_http.request.return_value = _mock_response(json_data={"threads": []})
+        mock_cls.return_value = mock_http
+
+        client = ForumClient(token="t", max_retries=0)
+        client._http._client = mock_http
+        client.threads.list(params={"forum_id": 42, "page": 2})
+        call_kwargs = mock_http.request.call_args
+        url = call_kwargs.kwargs["url"]
+        assert "forum_id=42" in url
+        assert "page=2" in url
+        client.close()
+
+    @patch("lolzteam.runtime.retry.time.sleep")
+    @patch("lolzteam.runtime.http_client.httpx.Client")
+    def test_retry_429_then_success(self, mock_cls: MagicMock, _mock_sleep: MagicMock) -> None:
+        mock_http = MagicMock()
+        responses = [
+            _mock_response(status_code=429, headers={"retry-after": "0"}),
+            _mock_response(json_data={"ok": True}),
+        ]
+        mock_http.request.side_effect = responses
+        mock_cls.return_value = mock_http
+
+        client = ForumClient(token="t", max_retries=2, base_delay=0.001, max_delay=0.01)
+        client._http._client = mock_http
+        result = client.threads.list()
+        assert result == {"ok": True}
+        assert mock_http.request.call_count == 2
+        client.close()
+
+    @patch("lolzteam.runtime.retry.time.sleep")
+    @patch("lolzteam.runtime.http_client.httpx.Client")
+    def test_retry_502_then_success(self, mock_cls: MagicMock, _mock_sleep: MagicMock) -> None:
+        mock_http = MagicMock()
+        responses = [
+            _mock_response(status_code=502),
+            _mock_response(json_data={"ok": True}),
+        ]
+        mock_http.request.side_effect = responses
+        mock_cls.return_value = mock_http
+
+        client = ForumClient(token="t", max_retries=2, base_delay=0.001, max_delay=0.01)
+        client._http._client = mock_http
+        result = client.threads.list()
+        assert result == {"ok": True}
+        assert mock_http.request.call_count == 2
+        client.close()
+
+    @patch("lolzteam.runtime.retry.time.sleep")
+    @patch("lolzteam.runtime.http_client.httpx.Client")
+    def test_retry_503_then_success(self, mock_cls: MagicMock, _mock_sleep: MagicMock) -> None:
+        mock_http = MagicMock()
+        responses = [
+            _mock_response(status_code=503),
+            _mock_response(json_data={"ok": True}),
+        ]
+        mock_http.request.side_effect = responses
+        mock_cls.return_value = mock_http
+
+        client = ForumClient(token="t", max_retries=2, base_delay=0.001, max_delay=0.01)
+        client._http._client = mock_http
+        result = client.threads.list()
+        assert result == {"ok": True}
+        assert mock_http.request.call_count == 2
+        client.close()
+
+    @patch("lolzteam.runtime.retry.time.sleep")
+    @patch("lolzteam.runtime.http_client.httpx.Client")
+    def test_retry_429_exhaust_raises_retry_exhausted(
+        self, mock_cls: MagicMock, _mock_sleep: MagicMock
+    ) -> None:
+        mock_http = MagicMock()
+        mock_http.request.return_value = _mock_response(
+            status_code=429, headers={"retry-after": "0"}
+        )
+        mock_cls.return_value = mock_http
+
+        client = ForumClient(token="t", max_retries=2, base_delay=0.001, max_delay=0.01)
+        client._http._client = mock_http
+        with pytest.raises(RetryExhaustedError) as exc_info:
+            client.threads.list()
+        assert isinstance(exc_info.value.last_error, RateLimitError)
+        assert mock_http.request.call_count == 3  # initial + 2 retries
+        client.close()
 
 
 # ---------------------------------------------------------------------------

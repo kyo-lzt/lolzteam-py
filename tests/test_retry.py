@@ -11,6 +11,7 @@ from lolzteam.runtime.errors import (
     NetworkError,
     NotFoundError,
     RateLimitError,
+    RetryExhaustedError,
     ServerError,
 )
 from lolzteam.runtime.retry import (
@@ -137,8 +138,9 @@ class TestWithRetry:
         def fn() -> str:
             raise RateLimitError(body={}, headers=EMPTY_HEADERS)
 
-        with pytest.raises(RateLimitError):
+        with pytest.raises(RetryExhaustedError) as exc_info:
             with_retry(fn, CONFIG, DUMMY_OPTS)
+        assert isinstance(exc_info.value.last_error, RateLimitError)
 
     @patch("lolzteam.runtime.retry.time.sleep")
     def test_does_not_retry_server_500(self, mock_sleep: object) -> None:
@@ -236,8 +238,9 @@ class TestAsyncWithRetry:
         async def fn() -> str:
             raise RateLimitError(body={}, headers=EMPTY_HEADERS)
 
-        with pytest.raises(RateLimitError):
+        with pytest.raises(RetryExhaustedError) as exc_info:
             await async_with_retry(fn, CONFIG, DUMMY_OPTS)
+        assert isinstance(exc_info.value.last_error, RateLimitError)
 
     @patch("lolzteam.runtime.retry.asyncio.sleep")
     async def test_does_not_retry_network_error(self, mock_sleep: object) -> None:

@@ -81,8 +81,12 @@ def _extract_body(
     if not isinstance(content, dict):
         return empty
 
-    # Try application/json first, then multipart/form-data
-    media_type = content.get("application/json") or content.get("multipart/form-data")
+    # Prefer form-urlencoded (matches _detect_content_type priority), then json, then multipart
+    media_type = (
+        content.get("application/x-www-form-urlencoded")
+        or content.get("application/json")
+        or content.get("multipart/form-data")
+    )
     if not isinstance(media_type, dict):
         return empty
 

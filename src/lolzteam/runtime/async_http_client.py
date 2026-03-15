@@ -155,13 +155,15 @@ class AsyncHttpClient:
         except httpx.HTTPError as error:
             raise NetworkError(error) from error
 
+        parse_error: Exception | None = None
         try:
             body: JsonValue = response.json()
-        except Exception:
+        except Exception as e:
             body = None
+            parse_error = e
 
         if not response.is_success:
-            raise create_http_error(response.status_code, body, response.headers)
+            raise create_http_error(response.status_code, body, response.headers, parse_error=parse_error)
 
         return body
 

@@ -5,7 +5,7 @@ import random
 import time
 from typing import TYPE_CHECKING, TypeVar
 
-from lolzteam.runtime.errors import NetworkError, RateLimitError, ServerError
+from lolzteam.runtime.errors import NetworkError, RateLimitError, RetryExhaustedError, ServerError
 from lolzteam.runtime.types import RetryInfo
 
 if TYPE_CHECKING:
@@ -47,7 +47,11 @@ def with_retry(
         try:
             return fn()
         except Exception as error:
-            if not is_retryable(error) or attempt == config.max_retries:
+            if not is_retryable(error):
+                raise
+            if attempt == config.max_retries:
+                if config.max_retries > 0:
+                    raise RetryExhaustedError(error, attempts=attempt + 1) from error
                 raise
             delay = compute_delay(attempt, config, error)
             if on_retry is not None:
@@ -61,8 +65,6 @@ def with_retry(
                     )
                 )
             time.sleep(delay)
-    msg = "unreachable: max_retries must be >= 0"
-    raise RuntimeError(msg)
 
 
 async def async_with_retry(
@@ -75,7 +77,11 @@ async def async_with_retry(
         try:
             return await fn()
         except Exception as error:
-            if not is_retryable(error) or attempt == config.max_retries:
+            if not is_retryable(error):
+                raise
+            if attempt == config.max_retries:
+                if config.max_retries > 0:
+                    raise RetryExhaustedError(error, attempts=attempt + 1) from error
                 raise
             delay = compute_delay(attempt, config, error)
             if on_retry is not None:
@@ -89,5 +95,3 @@ async def async_with_retry(
                     )
                 )
             await asyncio.sleep(delay)
-    msg = "unreachable: max_retries must be >= 0"
-    raise RuntimeError(msg)
